@@ -187,6 +187,11 @@ class FormModel extends \Joomla\Component\Content\Administrator\Model\ArticleMod
 
 			$data['associations'] = $associations;
 		}
+		
+		if (!\JLanguageMultilang::isEnabled())
+		{
+			$data['language'] = '*';
+		}
 
 		return parent::save($data);
 	}
@@ -210,6 +215,12 @@ class FormModel extends \Joomla\Component\Content\Administrator\Model\ArticleMod
 		{
 			$form->setFieldAttribute('catid', 'default', $params->get('catid', 1));
 			$form->setFieldAttribute('catid', 'readonly', 'true');
+		}
+		
+		if (!\JLanguageMultilang::isEnabled())
+		{
+			$form->setFieldAttribute('language', 'type', 'hidden');
+			$form->setFieldAttribute('language', 'default', '*');
 		}
 
 		return parent::preprocessForm($form, $data, $group);
