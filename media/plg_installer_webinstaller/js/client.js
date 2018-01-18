@@ -63,7 +63,10 @@
 			jsonpCallback: "jedapps_jsonpcallback",
 			timeout: 20000,
 			success: function (response) {
-				document.querySelector('#web-loader').style.display = 'none';
+				if (document.querySelector('#web-loader')) {
+					document.querySelector('#web-loader').style.display = 'none';
+				}
+
 				document.querySelector('#jed-container').innerHTML = response.data.html;
 
 				if (!Joomla.apps.update && response.data.pluginuptodate < 1) {
@@ -91,18 +94,22 @@
 					Joomla.apps.initiateSearch();
 				});
 
-				document.querySelector('#com-apps-ordering').addEventListener('change', function (event) {
-					Joomla.apps.ordering = jQuery(this).prop("selectedIndex");
-					Joomla.installfromwebajaxsubmit();
-				});
+				if (document.querySelector('#com-apps-ordering')) {
+					document.querySelector('#com-apps-ordering').addEventListener('change', function (event) {
+						Joomla.apps.ordering = jQuery(this).prop("selectedIndex");
+						Joomla.installfromwebajaxsubmit();
+					});
+				}
 
 				if (apps_installfrom_url != '') {
 					Joomla.installfromweb(apps_installfrom_url);
 				}
 			},
 			fail: function () {
-				document.querySelector('#web-loader').style.display = 'none';
-				document.querySelector('#web-loader-error').style.display = 'block';
+				if (document.querySelector('#web-loader')) {
+					document.querySelector('#web-loader').style.display = 'none';
+					document.querySelector('#web-loader-error').style.display = 'block';
+				}
 			},
 			complete: function () {
 				if (document.querySelector('#joomlaapsinstallatinput')) {
@@ -121,12 +128,14 @@
 				}
 			},
 			error: function (request, status, error) {
-				if (request.responseText) {
+				if (request.responseText && document.querySelector('#web-loader-error')) {
 					document.querySelector('#web-loader-error').innerHTML = request.responseText;
 				}
 
-				document.querySelector('#web-loader').style.display = 'none';
-				document.querySelector('#web-loader-error').style.display = 'block';
+				if (document.querySelector('#web-loader')) {
+					document.querySelector('#web-loader').style.display = 'none';
+					document.querySelector('#web-loader-error').style.display = 'block';
+				}
 			}
 		});
 		return true;
@@ -277,20 +286,25 @@
 	};
 
 	Joomla.apps.clicker = function () {
-		document.querySelector(".grid-view").addEventListener("click", function () {
-			Joomla.apps.list = 0;
-			document.querySelector(".list-container").classList.add("hidden");
-			document.querySelector(".grid-container").classList.remove("hidden");
-			document.querySelector("#btn-list-view").classList.remove("active");
-			document.querySelector("#btn-grid-view").classList.remove("active");
-		});
-		document.querySelector(".list-view").addEventListener("click", function () {
-			Joomla.apps.list = 1;
-			document.querySelector(".grid-container").classList.add("hidden");
-			document.querySelector(".list-container").classList.remove("hidden");
-			document.querySelector("#btn-grid-view").classList.remove("active");
-			document.querySelector("#btn-list-view").classList.add("active");
-		});
+		if (document.querySelector(".grid-view")) {
+			document.querySelector(".grid-view").addEventListener("click", function () {
+				Joomla.apps.list = 0;
+				document.querySelector(".list-container").classList.add("hidden");
+				document.querySelector(".grid-container").classList.remove("hidden");
+				document.querySelector("#btn-list-view").classList.remove("active");
+				document.querySelector("#btn-grid-view").classList.remove("active");
+			});
+		}
+
+		if (document.querySelector(".list-view")) {
+			document.querySelector(".list-view").addEventListener("click", function () {
+				Joomla.apps.list = 1;
+				document.querySelector(".grid-container").classList.add("hidden");
+				document.querySelector(".list-container").classList.remove("hidden");
+				document.querySelector("#btn-grid-view").classList.remove("active");
+				document.querySelector("#btn-list-view").classList.add("active");
+			});
+		}
 	};
 
 	Joomla.submitbutton5 = function (pressbutton) {
