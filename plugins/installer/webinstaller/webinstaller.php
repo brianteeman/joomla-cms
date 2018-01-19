@@ -53,11 +53,6 @@ class PlgInstallerWebinstaller extends CMSPlugin
 	 */
 	private $rtl = null;
 
-	public function onInstallerBeforeDisplay(&$showJedAndWebInstaller)
-	{
-		$showJedAndWebInstaller = false;
-	}
-
 	public function onInstallerViewBeforeFirstTab()
 	{
 		Factory::getLanguage()->load('plg_installer_webinstaller', JPATH_ADMINISTRATOR);
