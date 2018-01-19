@@ -16,6 +16,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Installer\Installer;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Updater\Update;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
@@ -27,7 +28,7 @@ use Joomla\CMS\Version;
  */
 class PlgInstallerWebinstaller extends CMSPlugin
 {
-	const REMOTE_URL = 'https://appscdn.joomla.org/webapps/';
+	const REMOTE_URL = 'http://jcms/';
 
 	/**
 	 * The application object.
@@ -36,6 +37,14 @@ class PlgInstallerWebinstaller extends CMSPlugin
 	 * @since  __DEPLOY_VERSION__
 	 */
 	protected $app;
+
+	/**
+	 * Load the language file on instantiation.
+	 *
+	 * @var    boolean
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $autoloadLanguage = true;
 
 	/**
 	 * The URL to install from
@@ -54,36 +63,14 @@ class PlgInstallerWebinstaller extends CMSPlugin
 	private $rtl = null;
 
 	/**
-	 * Event listener for the `onInstallerViewBeforeFirstTab` event.
+	 * Event listener for the `onInstallerAddInstallationTab` event.
 	 *
-	 * @return  void
+	 * @return  array  Returns an array with the tab information
 	 *
-	 * @since   3.2
+	 * @since   __DEPLOY_VERSION__
 	 */
-	public function onInstallerViewBeforeFirstTab()
+	public function onInstallerAddInstallationTab()
 	{
-		Factory::getLanguage()->load('plg_installer_webinstaller', JPATH_ADMINISTRATOR);
-
-		if (!$this->params->get('tab_position', 0))
-		{
-			$this->getChanges();
-		}
-	}
-
-	/**
-	 * Event listener for the `onInstallerViewAfterLastTab` event.
-	 *
-	 * @return  void
-	 *
-	 * @since   3.2
-	 */
-	public function onInstallerViewAfterLastTab()
-	{
-		if ($this->params->get('tab_position', 0))
-		{
-			$this->getChanges();
-		}
-
 		$installfrom = $this->getInstallFrom();
 
 		HTMLHelper::_('script', 'plg_installer_webinstaller/client.min.js', ['version' => 'auto', 'relative' => true]);
@@ -146,10 +133,22 @@ jQuery(document).ready(function ($) {
 		
 END;
 		$doc->addScriptDeclaration($javascript);
+
+		$tab = [
+			'name'  => 'web',
+			'label' => Text::_('COM_INSTALLER_INSTALL_FROM_WEB'),
+		];
+
+		// Render the input
+		ob_start();
+		include PluginHelper::getLayoutPath('installer', 'webinstaller');
+		$tab['content'] = ob_get_clean();
+
+		return $tab;
 	}
 
 	/**
-	 * Internal check to determine if the output is in RTL direction
+	 * Internal check to determine if the output is in a RTL direction
 	 *
 	 * @return  integer
 	 *
@@ -196,47 +195,5 @@ END;
 		}
 
 		return $this->installfrom;
-	}
-
-	/**
-	 * Get the changes to add to the UI.
-	 *
-	 * @return  void
-	 *
-	 * @since   3.2
-	 */
-	private function getChanges()
-	{
-		$installfrom = $this->getInstallFrom();
-		$dir         = '';
-
-		if ($this->isRTL())
-		{
-			$dir = ' dir="ltr"';
-		}
-
-		echo HTMLHelper::_('bootstrap.addTab', 'myTab', 'web', Text::_('COM_INSTALLER_INSTALL_FROM_WEB', true)); ?>
-			<div id="jed-container" class="tab-pane">
-				<div class="well" id="web-loader">
-					<h2><?php echo Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_WEB_LOADING'); ?></h2>
-				</div>
-				<div class="alert alert-error" id="web-loader-error" style="display:none">
-					<a class="close" data-dismiss="alert">×</a><?php echo Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_WEB_LOADING_ERROR'); ?>
-				</div>
-			</div>
-
-			<fieldset class="uploadform" id="uploadform-web" style="display:none"<?php echo $dir; ?>>
-				<div class="control-group">
-					<strong><?php echo Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_WEB_CONFIRM'); ?></strong><br />
-					<span id="uploadform-web-name-label"><?php echo Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_WEB_CONFIRM_NAME'); ?>:</span> <span id="uploadform-web-name"></span><br />
-					<?php echo Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_WEB_CONFIRM_URL'); ?>: <span id="uploadform-web-url"></span>
-				</div>
-				<div class="form-actions">
-					<input type="button" class="btn btn-primary" value="<?php echo Text::_('COM_INSTALLER_INSTALL_BUTTON'); ?>" onclick="Joomla.submitbutton<?php echo $installfrom != '' ? 4 : 5; ?>()" />
-					<input type="button" class="btn btn-secondary" value="<?php echo Text::_('JCANCEL'); ?>" onclick="Joomla.installfromwebcancel()" />
-				</div>
-			</fieldset>
-
-		<?php echo HTMLHelper::_('bootstrap.endTab');
 	}
 }
