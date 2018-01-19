@@ -76,7 +76,6 @@ class PlgInstallerWebinstaller extends CMSPlugin
 		}
 
 		$installfrom   = $this->getInstallFrom();
-		$installfromon = $installfrom ? 1 : 0;
 
 		HTMLHelper::_('script', 'plg_installer_webinstaller/client.min.js', ['version' => 'auto', 'relative' => true]);
 		HTMLHelper::_('stylesheet', 'plg_installer_webinstaller/client.min.css', ['version' => 'auto', 'relative' => true]);
@@ -90,59 +89,54 @@ class PlgInstallerWebinstaller extends CMSPlugin
 			$devLevel .= '-' . Version::EXTRA_VERSION;
 		}
 
-		$apps_base_url        = addslashes(self::REMOTE_URL);
-		$apps_installat_url   = base64_encode(Uri::current() . '?option=com_installer&view=install');
-		$apps_installfrom_url = addslashes($installfrom);
-		$apps_product         = base64_encode(Version::PRODUCT);
-		$apps_release         = base64_encode(Version::MAJOR_VERSION . '.' . Version::MINOR_VERSION);
-		$apps_dev_level       = base64_encode($devLevel);
-		$btntxt               = Text::_('COM_INSTALLER_MSG_INSTALL_ENTER_A_URL', true);
-		$pv                   = base64_encode($manifest->version);
-		$updatestr1           = Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_UPDATE_AVAILABLE', true);
-		$obsoletestr          = Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_OBSOLETE', true);
-		$updatestr2           = Text::_('JLIB_INSTALLER_UPDATE', true);
+		$doc = Factory::getDocument();
+
+		$doc->addScriptOptions(
+			'plg_installer_webinstaller',
+			[
+				'base_url'        => addslashes(self::REMOTE_URL),
+				'installat_url'   => base64_encode(Uri::current() . '?option=com_installer&view=install'),
+				'installfrom_url' => addslashes($installfrom),
+				'product'         => base64_encode(Version::PRODUCT),
+				'release'         => base64_encode(Version::MAJOR_VERSION . '.' . Version::MINOR_VERSION),
+				'dev_level'       => base64_encode($devLevel),
+				'installfromon'   => $installfrom ? 1 : 0,
+				'btntxt'          => Text::_('COM_INSTALLER_MSG_INSTALL_ENTER_A_URL', true),
+				'pv'              => base64_encode($manifest->version),
+				'updateavail1'    => Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_UPDATE_AVAILABLE', true),
+				'updateavail2'    => Text::_('JLIB_INSTALLER_UPDATE', true),
+			]
+		);
 
 		$javascript = <<<END
-var apps_base_url = '$apps_base_url',
-apps_installat_url = '$apps_installat_url',
-apps_installfrom_url = '$apps_installfrom_url',
-apps_product = '$apps_product',
-apps_release = '$apps_release',
-apps_dev_level = '$apps_dev_level',
-apps_installfromon = $installfromon,
-apps_btntxt = '$btntxt',
-apps_pv = '$pv',
-apps_updateavail1 = '$updatestr1',
-apps_updateavail2 = '$updatestr2',
-apps_obsolete = '$obsoletestr';
+jQuery(document).ready(function ($) {
+	var options = Joomla.getOptions('plg_installer_webinstaller', {});
 
-jQuery(document).ready(function($) {
-	if (apps_installfromon)	{
+	if (options.installfromon) {
 		$('#myTabTabs a[href="#web"]').click();
 	}
 
 	var link = $('#myTabTabs a[href="#web"]').get(0);
 
-	$(link).closest('li').click(function (event){
+	$(link).closest('li').click(function () {
 		if (!Joomla.apps.loaded) {
 			Joomla.apps.initialize();
 		}
 	});
 	
-	if (apps_installfrom_url != '') {
+	if (options.installfrom_url != '') {
 		$(link).closest('li').click();
 	}
 
-	$('#myTabTabs a[href="#web"]').on('shown.bs.tab', function (e) {
-		if (!Joomla.apps.loaded){
+	$('#myTabTabs a[href="#web"]').on('shown.bs.tab', function () {
+		if (!Joomla.apps.loaded) {
 			Joomla.apps.initialize();
 		}
 	});
 });
-
 		
 END;
-		Factory::getDocument()->addScriptDeclaration($javascript);
+		$doc->addScriptDeclaration($javascript);
 	}
 
 	private function isRTL()
@@ -204,8 +198,8 @@ END;
 
 			<fieldset class="uploadform" id="uploadform-web" style="display:none"<?php echo $dir; ?>>
 				<div class="control-group">
-					<strong><?php echo Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_WEB_CONFIRM'); ?></strong><br>
-					<span id="uploadform-web-name-label"><?php echo Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_WEB_CONFIRM_NAME'); ?>:</span> <span id="uploadform-web-name"></span><br>
+					<strong><?php echo Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_WEB_CONFIRM'); ?></strong><br />
+					<span id="uploadform-web-name-label"><?php echo Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_WEB_CONFIRM_NAME'); ?>:</span> <span id="uploadform-web-name"></span><br />
 					<?php echo Text::_('COM_INSTALLER_WEBINSTALLER_INSTALL_WEB_CONFIRM_URL'); ?>: <span id="uploadform-web-url"></span>
 				</div>
 				<div class="form-actions">
