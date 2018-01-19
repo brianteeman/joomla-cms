@@ -53,6 +53,13 @@ class PlgInstallerWebinstaller extends CMSPlugin
 	 */
 	private $rtl = null;
 
+	/**
+	 * Event listener for the `onInstallerViewBeforeFirstTab` event.
+	 *
+	 * @return  void
+	 *
+	 * @since   3.2
+	 */
 	public function onInstallerViewBeforeFirstTab()
 	{
 		Factory::getLanguage()->load('plg_installer_webinstaller', JPATH_ADMINISTRATOR);
@@ -63,6 +70,13 @@ class PlgInstallerWebinstaller extends CMSPlugin
 		}
 	}
 
+	/**
+	 * Event listener for the `onInstallerViewAfterLastTab` event.
+	 *
+	 * @return  void
+	 *
+	 * @since   3.2
+	 */
 	public function onInstallerViewAfterLastTab()
 	{
 		if ($this->params->get('tab_position', 0))
@@ -70,7 +84,7 @@ class PlgInstallerWebinstaller extends CMSPlugin
 			$this->getChanges();
 		}
 
-		$installfrom   = $this->getInstallFrom();
+		$installfrom = $this->getInstallFrom();
 
 		HTMLHelper::_('script', 'plg_installer_webinstaller/client.min.js', ['version' => 'auto', 'relative' => true]);
 		HTMLHelper::_('stylesheet', 'plg_installer_webinstaller/client.min.css', ['version' => 'auto', 'relative' => true]);
@@ -134,19 +148,33 @@ END;
 		$doc->addScriptDeclaration($javascript);
 	}
 
+	/**
+	 * Internal check to determine if the output is in RTL direction
+	 *
+	 * @return  integer
+	 *
+	 * @since   3.2
+	 */
 	private function isRTL()
 	{
 		if ($this->rtl === null)
 		{
-			$this->rtl = strtolower(Factory::getDocument()->getDirection()) == 'rtl' ? 1 : 0;
+			$this->rtl = strtolower(Factory::getDocument()->getDirection()) === 'rtl' ? 1 : 0;
 		}
 
 		return $this->rtl;
 	}
 
+	/**
+	 * Get the install from URL
+	 *
+	 * @return  string
+	 *
+	 * @since   3.2
+	 */
 	private function getInstallFrom()
 	{
-		if (is_null($this->installfrom))
+		if ($this->installfrom === null)
 		{
 			$installfrom = base64_decode($this->app->input->getBase64('installfrom', ''));
 
@@ -170,11 +198,17 @@ END;
 		return $this->installfrom;
 	}
 
+	/**
+	 * Get the changes to add to the UI.
+	 *
+	 * @return  void
+	 *
+	 * @since   3.2
+	 */
 	private function getChanges()
 	{
-		$installfrom   = $this->getInstallFrom();
-		$installfromon = $installfrom ? 1 : 0;
-		$dir           = '';
+		$installfrom = $this->getInstallFrom();
+		$dir         = '';
 
 		if ($this->isRTL())
 		{
@@ -204,6 +238,5 @@ END;
 			</fieldset>
 
 		<?php echo HTMLHelper::_('bootstrap.endTab');
-
 	}
 }
