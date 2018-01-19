@@ -112,16 +112,22 @@ jQuery(document).ready(function ($) {
 		$('#myTabTabs a[href="#web"]').click();
 	}
 
-	var link = $('#myTabTabs a[href="#web"]').get(0);
+	var link = $('#myTabTabs a[href="#web"]');
 
-	$(link).closest('li').click(function () {
+	if (link.hasClass('active')) {
+		if (!Joomla.apps.loaded) {
+			Joomla.apps.initialize();
+		}
+	}
+
+	link.closest('li').click(function () {
 		if (!Joomla.apps.loaded) {
 			Joomla.apps.initialize();
 		}
 	});
 	
 	if (options.installfrom_url != '') {
-		$(link).closest('li').click();
+		link.closest('li').click();
 	}
 
 	$('#myTabTabs a[href="#web"]').on('shown.bs.tab', function () {
