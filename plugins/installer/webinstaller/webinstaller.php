@@ -28,7 +28,7 @@ use Joomla\CMS\Version;
  */
 class PlgInstallerWebinstaller extends CMSPlugin
 {
-	const REMOTE_URL = 'http://jcms/';
+	const REMOTE_URL = 'https://appscdn.joomla.org/webapps/';
 
 	/**
 	 * The application object.
