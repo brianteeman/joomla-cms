@@ -27,23 +27,6 @@ class JFormFieldprivacy extends JFormFieldRadio
 	protected $type = 'privacy';
 
 	/**
-	 * Method to get the field input markup.
-	 *
-	 * @return  string   The field input markup.
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	 protected function getInput()
-	{
-		$privacynote = !empty($this->element['note']) ? $this->element['note'] : JText::_('PLG_USER_PRIVACY_NOTE_FIELD_DEFAULT');
-
-		echo '<div class="alert alert-info">' . $privacynote . '</div>';
-
-		return parent::getInput();
-	}
-
-
-	/**
 	 * Method to get the field label markup.
 	 *
 	 * @return  string  The field label markup.
@@ -66,12 +49,14 @@ class JFormFieldprivacy extends JFormFieldRadio
 		// Set required to true as this field is not displayed at all if not required.
 		$this->required = true;
 
-		JHtml::_('behavior.modal');
+		// Load Bootstrap js for the modal
+		JHtml::_('bootstrap.framework');
 
 		// Build the class for the label.
 		$class = !empty($this->description) ? 'hasTooltip' : '';
 		$class = $class . ' required';
 		$class = !empty($this->labelClass) ? $class . ' ' . $this->labelClass : $class;
+		$modal = '';
 
 		// Add the opening label tag and main attributes.
 		$label .= '<label id="' . $this->id . '-lbl" for="' . $this->id . '" class="' . $class . '"';
@@ -92,10 +77,6 @@ class JFormFieldprivacy extends JFormFieldRadio
 		{
 			JLoader::register('ContentHelperRoute', JPATH_BASE . '/components/com_content/helpers/route.php');
 
-			$attribs          = array();
-			$attribs['class'] = 'modal';
-			$attribs['rel']   = '{handler: \'iframe\', size: {x:800, y:500}}';
-
 			$db    = JFactory::getDbo();
 			$query = $db->getQuery(true)
 				->select($db->quoteName(array('id', 'alias', 'catid', 'language')))
@@ -114,22 +95,26 @@ class JFormFieldprivacy extends JFormFieldRadio
 			if (isset($privacyassociated) && $current_lang !== $article->language && array_key_exists($current_lang, $privacyassociated))
 			{
 				$url  = ContentHelperRoute::getArticleRoute($privacyassociated[$current_lang]->id, $privacyassociated[$current_lang]->catid);
-				$link = JHtml::_('link', JRoute::_($url . '&tmpl=component&lang=' . $privacyassociated[$current_lang]->language), $text, $attribs);
+				$modalLink = JRoute::_($url . '&tmpl=component&lang=' . $privacyassociated[$current_lang]->language);
 			}
 			else
 			{
 				$slug = $article->alias ? ($article->id . ':' . $article->alias) : $article->id;
 				$url  = ContentHelperRoute::getArticleRoute($slug, $article->catid);
-				$link = JHtml::_('link', JRoute::_($url . '&tmpl=component&lang=' . $article->language), $text, $attribs);
+				$modalLink = JRoute::_($url . '&tmpl=component&lang=' . $article->language);
 			}
-		}
-		else
-		{
-			$link = $text;
+
+			// Prepare the modal HTML
+			$modal = JHtml::_('bootstrap.renderModal', 'privacy_modal',
+						array(
+							'title' => htmlspecialchars($text, ENT_COMPAT, 'UTF-8'),
+							'url'   => $modalLink,
+						)
+					);
 		}
 
 		// Add the label text and closing tag.
-		$label .= '>' . $link . '<span class="star">&#160;*</span></label>';
+		$label .= '>' . $text . '<span class="star">&#160;*</span></label>' . $modal;
 
 		return $label;
 	}
