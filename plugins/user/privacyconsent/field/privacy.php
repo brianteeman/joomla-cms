@@ -121,7 +121,7 @@ class JFormFieldprivacy extends JFormFieldRadio
 			}
 
 			// Prepare the modal HTML
-			$modal = JHtml::_('bootstrap.renderModal', $this->id,
+			$modal = JHtml::_('bootstrap.renderModal', $this->id . '_modal',
 				array(
 					'title' => htmlspecialchars($text, ENT_COMPAT, 'UTF-8'),
 					'url'   => $modalLink,
@@ -130,7 +130,7 @@ class JFormFieldprivacy extends JFormFieldRadio
 		}
 
 		// Add the label text and closing tag.
-		$label .= '>' . $text . '<span class="star">&#160;*</span></label>' . $modal;
+		$label .= '><a href="' . $this->id . '_modal">' . $text . '</a><span class="star">&#160;*</span></label>' . $modal;
 
 		return $label;
 	}
