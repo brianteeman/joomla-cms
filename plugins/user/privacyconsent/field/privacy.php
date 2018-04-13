@@ -105,7 +105,7 @@ class JFormFieldprivacy extends JFormFieldRadio
 			}
 
 			// Prepare the modal HTML
-			$modal = JHtml::_('bootstrap.renderModal', 'privacy_modal',
+			$modal = JHtml::_('bootstrap.renderModal', $this->id,
 						array(
 							'title' => htmlspecialchars($text, ENT_COMPAT, 'UTF-8'),
 							'url'   => $modalLink,
