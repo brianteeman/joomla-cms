@@ -109,8 +109,9 @@ class PlgUserPrivacyconsent extends JPlugin
 	{
 		// Check that the privacy is checked if required ie only in registration from frontend.
 		$option = $this->app->input->getCmd('option');
+		$form   = $this->app->input->post->get('jform', array(), 'array');
 
-		if ($this->app->isClient('site') && (!$data['privacyconsent']['privacy']) || (!$data['privacyconsent']['privacy']) && $option === 'com_admin')
+		if ($this->app->isClient('site') && (!$form['privacyconsent']['privacy']) || (!$form['privacyconsent']['privacy']) && $option === 'com_admin')
 		{
 			throw new InvalidArgumentException(JText::_('PLG_USER_PRIVACY_FIELD_ERROR'));
 		}
