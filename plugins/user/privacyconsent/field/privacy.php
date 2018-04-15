@@ -9,6 +9,9 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+
 JFormHelper::loadFieldClass('radio');
 
 /**
@@ -35,7 +38,7 @@ class JFormFieldprivacy extends JFormFieldRadio
 	 */
 	 protected function getInput()
 	{
-		$privacynote = !empty($this->element['note']) ? $this->element['note'] : JText::_('PLG_USER_PRIVACYCONSENT_NOTE_FIELD_DEFAULT');
+		$privacynote = !empty($this->element['note']) ? $this->element['note'] : Text::_('PLG_USER_PRIVACYCONSENT_NOTE_FIELD_DEFAULT');
 
 		echo '<div class="alert alert-info">' . $privacynote . '</div>';
 
@@ -59,7 +62,7 @@ class JFormFieldprivacy extends JFormFieldRadio
 
 		// Get the label text from the XML element, defaulting to the element name.
 		$text = $this->element['label'] ? (string) $this->element['label'] : (string) $this->element['name'];
-		$text = $this->translateLabel ? JText::_($text) : $text;
+		$text = $this->translateLabel ? Text::_($text) : $text;
 
 		// Set required to true as this field is not displayed at all if not required.
 		$this->required = true;
@@ -79,14 +82,14 @@ class JFormFieldprivacy extends JFormFieldRadio
 		{
 			$label .= ' title="'
 				. htmlspecialchars(
-					trim($text, ':') . '<br />' . ($this->translateDescription ? JText::_($this->description) : $this->description),
+					trim($text, ':') . '<br />' . ($this->translateDescription ? Text::_($this->description) : $this->description),
 					ENT_COMPAT, 'UTF-8'
 				) . '"';
 		}
 
 		$privacyarticle = $this->element['article'] > 0 ? (int) $this->element['article'] : 0;
 
-		if ($privacyarticle && JFactory::getApplication()->isClient('site'))
+		if ($privacyarticle && Factory::getApplication()->isClient('site'))
 		{
 			JLoader::register('ContentHelperRoute', JPATH_BASE . '/components/com_content/helpers/route.php');
 
@@ -94,7 +97,7 @@ class JFormFieldprivacy extends JFormFieldRadio
 			$attribs['class'] = 'modal';
 			$attribs['rel']   = '{handler: \'iframe\', size: {x:800, y:500}}';
 
-			$db    = JFactory::getDbo();
+			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
 				->select($db->quoteName(array('id', 'alias', 'catid', 'language')))
 				->from($db->quoteName('#__content'))
@@ -107,7 +110,7 @@ class JFormFieldprivacy extends JFormFieldRadio
 				$privacyassociated = JLanguageAssociations::getAssociations('com_content', '#__content', 'com_content.item', $privacyarticle);
 			}
 
-			$current_lang = JFactory::getLanguage()->getTag();
+			$current_lang = Factory::getLanguage()->getTag();
 
 			if (isset($privacyassociated) && $current_lang !== $article->language && array_key_exists($current_lang, $privacyassociated))
 			{

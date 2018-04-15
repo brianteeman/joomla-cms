@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -127,7 +129,7 @@ class PlgUserPrivacyconsent extends JPlugin
 
 		if ($this->app->isClient('site') && (!$data['privacyconsent']['privacy']) || (!$data['privacyconsent']['privacy']) && $option === 'com_admin')
 		{
-			throw new InvalidArgumentException(JText::_('PLG_USER_PRIVACYCONSENT_FIELD_ERROR'));
+			throw new InvalidArgumentException(Text::_('PLG_USER_PRIVACYCONSENT_FIELD_ERROR'));
 		}
 
 		return true;
@@ -168,10 +170,10 @@ class PlgUserPrivacyconsent extends JPlugin
 		$userNote = (object) array(
 			'user_id'         => $userId,
 			'catid'           => 0,
-			'subject'         => JText::_('PLG_USER_PRIVACYCONSENT_SUBJECT'),
-			'body'            => JText::sprintf('PLG_USER_PRIVACYCONSENT_BODY', $ip, $userAgent),
+			'subject'         => Text::_('PLG_USER_PRIVACYCONSENT_SUBJECT'),
+			'body'            => Text::sprintf('PLG_USER_PRIVACYCONSENT_BODY', $ip, $userAgent),
 			'state'           => 1,
-			'created_time'    => JFactory::getDate()->toSql(),
+			'created_time'    => Factory::getDate()->toSql(),
 		);
 
 		try
@@ -282,7 +284,7 @@ class PlgUserPrivacyconsent extends JPlugin
 			return;
 		}
 
-		$userId = JFactory::getUser()->id;
+		$userId = Factory::getUser()->id;
 
 		$query = $this->db->getQuery(true)
 			->select('1')
@@ -316,7 +318,7 @@ class PlgUserPrivacyconsent extends JPlugin
 
 		if (empty($messageOnRedirect))
 		{
-			return \JText::_('PLG_USER_PRIVACYCONSENT_REDIRECT_MESSAGE_DEFAULT');
+			return Text::_('PLG_USER_PRIVACYCONSENT_REDIRECT_MESSAGE_DEFAULT');
 		}
 
 		return $messageOnRedirect;
