@@ -35,7 +35,7 @@ class JFormFieldprivacy extends JFormFieldRadio
 	 */
 	 protected function getInput()
 	{
-		$privacynote = !empty($this->element['note']) ? $this->element['note'] : JText::_('PLG_USER_PRIVACY_NOTE_FIELD_DEFAULT');
+		$privacynote = !empty($this->element['note']) ? $this->element['note'] : JText::_('PLG_USER_PRIVACYCONSENT_NOTE_FIELD_DEFAULT');
 
 		echo '<div class="alert alert-info">' . $privacynote . '</div>';
 
@@ -52,11 +52,9 @@ class JFormFieldprivacy extends JFormFieldRadio
 	 */
 	protected function getLabel()
 	{
-		$label = '';
-
 		if ($this->hidden)
 		{
-			return $label;
+			return '';
 		}
 
 		// Get the label text from the XML element, defaulting to the element name.
@@ -74,7 +72,7 @@ class JFormFieldprivacy extends JFormFieldRadio
 		$class = !empty($this->labelClass) ? $class . ' ' . $this->labelClass : $class;
 
 		// Add the opening label tag and main attributes.
-		$label .= '<label id="' . $this->id . '-lbl" for="' . $this->id . '" class="' . $class . '"';
+		$label = '<label id="' . $this->id . '-lbl" for="' . $this->id . '" class="' . $class . '"';
 
 		// If a description is specified, use it to build a tooltip.
 		if (!empty($this->description))
