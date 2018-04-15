@@ -148,7 +148,12 @@ class PlgUserPrivacyconsent extends JPlugin
 		$option = $this->app->input->getCmd('option');
 		$form   = $this->app->input->post->get('jform', array(), 'array');
 
-		if ($this->app->isClient('site') && (!$form['privacyconsent']['privacy']) || (!$form['privacyconsent']['privacy']) && $option === 'com_admin')
+		if ($this->app->isClient('administrator'))
+		{
+			return true;
+		}
+
+		if (isset($form['privacyconsent']['privacy']) && (!$form['privacyconsent']['privacy']))
 		{
 			throw new InvalidArgumentException(JText::_('PLG_USER_PRIVACY_FIELD_ERROR'));
 		}
