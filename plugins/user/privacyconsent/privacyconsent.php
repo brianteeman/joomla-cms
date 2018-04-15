@@ -85,6 +85,44 @@ class PlgUserPrivacyconsent extends JPlugin
 			'privacy',
 		);
 
+		if (is_object($data))
+		{
+
+			$userId = isset($data->id) ? $data->id : 0;
+
+			if ($userId > 0)
+			{
+				// Load the profile data from the database.
+				$db = JFactory::getDbo();
+
+				$query = $db->getQuery(true)
+					->select($db->quoteName('profile_value'))
+					->from($db->quoteName('#__user_profiles'))
+					->where($db->quoteName('user_id') . ' = ' . (int) $userId)
+					->where($db->quoteName('profile_key') . ' LIKE ' . $db->quote('consent'))
+					->order($db->quoteName('ordering') . ' ASC');
+				$db->setQuery($query);
+
+				try
+				{
+					$results = $db->loadRowList();
+				}
+				catch (RuntimeException $e)
+				{
+					$this->_subject->setError($e->getMessage());
+
+					return false;
+				}
+
+				if (!empty($results[0]) == 1)
+				{
+					$form->removeField('privacy', 'privacyconsent');
+
+					return true;
+				}
+			}
+		}
+
 		$privacyarticle	= $this->params->get('privacy_article');
 		$privacynote	= $this->params->get('privacy_note');
 
