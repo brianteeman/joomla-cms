@@ -87,7 +87,6 @@ class PlgUserPrivacyconsent extends JPlugin
 
 		if (is_object($data))
 		{
-
 			$userId = isset($data->id) ? $data->id : 0;
 
 			if ($userId > 0)
@@ -99,8 +98,8 @@ class PlgUserPrivacyconsent extends JPlugin
 					->select($db->quoteName('profile_value'))
 					->from($db->quoteName('#__user_profiles'))
 					->where($db->quoteName('user_id') . ' = ' . (int) $userId)
-					->where($db->quoteName('profile_key') . ' LIKE ' . $db->quote('consent'))
-					->order($db->quoteName('ordering') . ' ASC');
+					->where($db->quoteName('profile_key') . ' = ' . $db->quote('consent'))
+					->where($db->quoteName('profile_value') . ' = ' . $db->quote('1'));
 				$db->setQuery($query);
 
 				try
@@ -114,7 +113,7 @@ class PlgUserPrivacyconsent extends JPlugin
 					return false;
 				}
 
-				if (!empty($results[0]) == 1)
+				if (!empty($results[0]))
 				{
 					$form->removeField('privacy', 'privacyconsent');
 
