@@ -83,13 +83,13 @@ class PlgUserPrivacyconsent extends JPlugin
 		$layout = $this->app->input->get('layout', 'default', 'string');
 		$view	= $this->app->input->get('view', 'default', 'string');
 
-		// check for the correct form names
+		// Check for the correct form.
 		if (!in_array($name, array('com_admin.profile', 'com_users.profile', 'com_users.registration')))
 		{
 			return true;
 		}
 
-		// Just the view registration and layout edit matter for this plugin
+		// Check for the correct layout and view.
 		if ($layout != 'edit' && $view != 'registration')
 		{
 			return true;
