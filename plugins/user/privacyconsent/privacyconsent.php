@@ -124,7 +124,6 @@ class PlgUserPrivacyconsent extends JPlugin
 				{
 					$results = $db->loadRowList();
 				}
-
 				catch (RuntimeException $e)
 				{
 					$this->_subject->setError($e->getMessage());
