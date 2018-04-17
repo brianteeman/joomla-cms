@@ -69,9 +69,9 @@ class JFormFieldprivacy extends JFormFieldRadio
 		JHtml::_('behavior.modal');
 
 		// Build the class for the label.
-		$class = !empty($this->description) ? 'hasTooltip' : '';
-		$class = $class . ' required';
-		$class = !empty($this->labelClass) ? $class . ' ' . $this->labelClass : $class;
+		$class = 'required';
+		$class .= !empty($this->description) ? ' hasTooltip' : '';
+		$class .= !empty($this->labelClass) ? ' ' . $this->labelClass : '';
 
 		// Add the opening label tag and main attributes.
 		$label = '<label id="' . $this->id . '-lbl" for="' . $this->id . '" class="' . $class . '"';
