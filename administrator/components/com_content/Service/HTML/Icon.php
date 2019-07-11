@@ -101,23 +101,7 @@ class Icon
 	 */
 	public function email($article, $params, $attribs = array(), $legacy = false)
 	{
-		$uri      = Uri::getInstance();
-		$base     = $uri->toString(array('scheme', 'host', 'port'));
-		$template = $this->application->getTemplate();
-		$link     = $base . Route::_(\ContentHelperRoute::getArticleRoute($article->slug, $article->catid, $article->language), false);
-		$url      = 'index.php?option=com_mailto&tmpl=component&template=' . $template . '&link=' . MailtoHelper::addLink($link);
-
-		$height = Factory::getApplication()->get('captcha', '0') === '0' ? 450 : 550;
-		$status = 'width=400,height=' . $height . ',menubar=yes,resizable=yes';
-
-		$text = LayoutHelper::render('joomla.content.icons.email', array('params' => $params, 'legacy' => $legacy));
-
-		$attribs['title']   = Text::_('JGLOBAL_EMAIL_TITLE');
-		$attribs['onclick'] = "window.open(this.href,'win2','" . $status . "'); return false;";
-		$attribs['rel']     = 'nofollow';
-		$attribs['class']   = 'dropdown-item';
-
-		return HTMLHelper::_('link', Route::_($url), $text, $attribs);
+		// Files removed
 	}
 
 	/**

@@ -182,7 +182,6 @@ $tmpl    = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=c
 			</fieldset>
 			<?php echo HTMLHelper::_('uitab.endTab'); ?>
 		<?php endif; ?>
-
 		<?php
 		$this->fieldsets        = array();
 		$this->ignore_fieldsets = array('basic', 'description');

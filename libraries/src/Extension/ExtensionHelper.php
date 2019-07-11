@@ -67,7 +67,6 @@ class ExtensionHelper
 		array('component', 'com_joomlaupdate', '', 1),
 		array('component', 'com_languages', '', 1),
 		array('component', 'com_login', '', 1),
-		array('component', 'com_mailto', '', 0),
 		array('component', 'com_media', '', 1),
 		array('component', 'com_menus', '', 1),
 		array('component', 'com_messages', '', 1),

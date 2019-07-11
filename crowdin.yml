@@ -116,9 +116,6 @@ files:
   - source: /administrator/language/en-GB/en-GB.com_login.sys.ini
     translation: /administrator/language/%locale%/%locale%.com_login.sys.ini
     update_option: update_as_unapproved
-  - source: /administrator/language/en-GB/en-GB.com_mailto.sys.ini
-    translation: /administrator/language/%locale%/%locale%.com_mailto.sys.ini
-    update_option: update_as_unapproved
   - source: /administrator/language/en-GB/en-GB.com_media.ini
     translation: /administrator/language/%locale%/%locale%.com_media.ini
     update_option: update_as_unapproved
@@ -948,9 +945,6 @@ files:
     update_option: update_as_unapproved
   - source: /language/en-GB/en-GB.com_finder.ini
     translation: /language/%locale%/%locale%.com_finder.ini
-    update_option: update_as_unapproved
-  - source: /language/en-GB/en-GB.com_mailto.ini
-    translation: /language/%locale%/%locale%.com_mailto.ini
     update_option: update_as_unapproved
   - source: /language/en-GB/en-GB.com_media.ini
     translation: /language/%locale%/%locale%.com_media.ini

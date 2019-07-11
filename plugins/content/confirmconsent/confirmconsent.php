@@ -43,7 +43,6 @@ class PlgContentConfirmConsent extends CMSPlugin
 	 */
 	protected $supportedContext = array(
 		'com_contact.contact',
-		'com_mailto.mailto',
 		'com_privacy.request',
 	);
 
