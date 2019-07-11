@@ -19,7 +19,6 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Workflow\Workflow;
-use Joomla\Component\Mailto\Site\Helper\MailtoHelper;
 use Joomla\Registry\Registry;
 
 /**
