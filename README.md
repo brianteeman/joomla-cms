@@ -1,4 +1,5 @@
 Joomla! CMS™ [![Analytics](https://ga-beacon.appspot.com/UA-544070-3/joomla-cms/readme)](https://github.com/igrigorik/ga-beacon)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fbrianteeman%2Fjoomla-cms.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fbrianteeman%2Fjoomla-cms?ref=badge_shield)
 ====================
 
 Build Status
@@ -94,3 +95,7 @@ Copyright
 * [Special Thanks](https://docs.joomla.org/Joomla!_Credits_and_Thanks)
 * Distributed under the GNU General Public License version 2 or later
 * See [License details](https://docs.joomla.org/Joomla_Licenses)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fbrianteeman%2Fjoomla-cms.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fbrianteeman%2Fjoomla-cms?ref=badge_large)
