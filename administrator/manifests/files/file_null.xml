@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="4.0.0" type="file" method="upgrade">
+    <dlid prefix="dlid=" suffix="&amp;dummy=my.zip" />
+    <name>file_null</name>
+    <author>Nicholas K. Dionysopoulos</author>
+    <authorEmail>nicholas@akeebabackup.com</authorEmail>
+    <authorUrl>https://www.akeebabackup.com</authorUrl>
+    <copyright>Copyright (c)2019 Akeeba Ltd</copyright>
+    <license>GNU GPL v3 or later</license>
+    <version>1.0</version>
+    <creationDate>2019-10-18</creationDate>
+    <description>Null Files 1.0</description>
+
+    <fileset>
+        <files target="tmp">
+            <file>null.txt</file>
+        </files>
+    </fileset>
+
+    <!-- Update servers -->
+    <updateservers>
+        <server type="extension" priority="1" name="Null Files"><![CDATA[http://updates.myoldsite.com/null.xml]]></server>
+    </updateservers>
+</extension>
