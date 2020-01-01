@@ -113,9 +113,11 @@ class PlgTwofactorauthTotp extends CMSPlugin
 		$username = Factory::getUser($user_id)->username;
 		$sitename = Factory::getApplication()->get('sitename');
 
+		// Encode sitename according to RFC 3986 for the QR code URL
+		$sitenameEncoded = rawurlencode($sitename);
 
 		// This is the URL to the QR code for Google Authenticator
-		$url = sprintf("otpauth://totp/%s/%s?secret=%s&issuer=%s", $sitename, $username, $secret, $sitename);
+		$url = sprintf("otpauth://totp/%s/%s?secret=%s&issuer=%s", $sitenameEncoded, $username, $secret, $sitenameEncoded);
 
 		// Is this a new TOTP setup? If so, we'll have to show the code validation field.
 		$new_totp = $otpConfig->method !== 'totp';
