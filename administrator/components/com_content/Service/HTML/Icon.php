@@ -156,7 +156,7 @@ class Icon
 			return $output;
 		}
 
-		$contentUrl = \ContentHelperRoute::getArticleRoute($article->slug, $article->catid, $article->language);
+		$contentUrl = RouteHelper::getArticleRoute($article->slug, $article->catid, $article->language);
 		$url        = $contentUrl . '&task=article.edit&a_id=' . $article->id . '&return=' . base64_encode($uri);
 
 		if ($article->state == Workflow::CONDITION_UNPUBLISHED)
@@ -198,7 +198,7 @@ class Icon
 	 */
 	public function print_popup($article, $params, $attribs = array(), $legacy = false)
 	{
-		$url  = \ContentHelperRoute::getArticleRoute($article->slug, $article->catid, $article->language);
+		$url  = RouteHelper::getArticleRoute($article->slug, $article->catid, $article->language);
 		$url .= '&tmpl=component&print=1&layout=default';
 
 		$status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
