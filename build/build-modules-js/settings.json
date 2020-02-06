@@ -505,7 +505,7 @@
             "name": "short-and-sweet",
             "type": "script",
             "uri": "short-and-sweet.min.js",
-            "attribute": {
+            "attributes": {
               "defer": true
             }
           }
