@@ -495,7 +495,10 @@
           {
             "name": "accessibility",
             "type": "script",
-            "uri": "accessibility.min.js"
+            "uri": "accessibility.min.js",
+            "attributes": {
+              "defer": true
+            }
           }
         ]
       },
