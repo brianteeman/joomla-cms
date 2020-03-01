@@ -56,10 +56,10 @@
     .custom-select {
       min-width: 15rem;
 
-		&.is-focused {
-		  border-color: $focuscolor;
-		  box-shadow: $focusshadow;
-		}
+      &.is-focused {
+        border-color: $focuscolor;
+        box-shadow: $focusshadow;
+      }
     }
 
     .chzn-container-single {
