@@ -55,6 +55,9 @@ module.exports.compileJS = (options, path) => {
           },
         );
       });
+
+      // hack, needs a bundler
+      HandleFile.run('media/plg_editors_tinymce/js/plugins/tinymce-language-selector/plugin.es6.js');
     })
 
     // Handle errors
