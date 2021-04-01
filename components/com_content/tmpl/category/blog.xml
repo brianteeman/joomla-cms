@@ -236,10 +236,11 @@
 
 			<field
 				name="blog_information-j4"
-				type="spacer"
-				label="JGLOBAL_BLOG_STYLE_GRID_LABEL"
+				type="note"
+				heading="h3"
+				label="JGLOBAL_BLOG_STYLE_GRID_NOTE_HEADING"
 				parentclass="stack span-2-inline"
-				description="JGLOBAL_BLOG_STYLE_GRID_DESC"
+				description="JGLOBAL_BLOG_STYLE_GRID_NOTE_DESC"
 				showon="blog_style:1"
 			/>
 
