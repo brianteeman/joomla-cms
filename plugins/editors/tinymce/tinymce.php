@@ -472,7 +472,7 @@ class PlgEditorTinymce extends CMSPlugin
 		{
 			// Do we have a custom content_template_path
 			$template_path = $levelParams->get('content_template_path');
-			$template_path = $template_path && $template_path != -1 ? '/templates/' . $template_path : '/media/vendor/tinymce/templates';
+			$template_path = $template_path ? '/templates/' . $template_path : '/media/vendor/tinymce/templates';
 
 			foreach (glob(JPATH_ROOT . $template_path . '/*.{html,txt}', GLOB_BRACE) as $filepath)
 			{
