@@ -13,6 +13,9 @@ use Joomla\CMS\Language\Text;
 
 extract($displayData);
 
+
+
+
 /**
  * Layout variables
  * -----------------
