@@ -69,7 +69,7 @@ class ClientModel extends AdminModel
 	 */
 	protected function canEditState($record)
 	{
-		$user = Factory::getUser();
+		$user =
 
 		if (!empty($record->catid))
 		{
