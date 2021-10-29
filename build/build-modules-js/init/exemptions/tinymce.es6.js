@@ -77,7 +77,7 @@ module.exports.tinyMCE = async (packageName, version) => {
   let jsContent = await readFile('build/media_source/plg_editors_tinymce/js/plugins/highlighter/source.es5.js', { encoding: 'utf8' });
   jsContent = await minify(jsContent, { sourceMap: false, format: { comments: false } });
   // Write the HTML file
-  let htmlContent = `<!DOCTYPE html>
+  const htmlContent = `<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
