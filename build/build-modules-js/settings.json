@@ -428,7 +428,7 @@
         "licenseFilename": "LICENSE.txt"
       },
       "joomla-a11y-checker": {
-        "name": "joomla-a11-checker",
+        "name": "joomla-a11y-checker",
         "js": {
           "dist/js/joomla-a11y-checker.umd.js": "js/joomla-a11y-checker.es5.js",
           "dist/js/joomla-a11y-checker.umd.min.js": "js/joomla-a11y-checker.min.es5.js"
