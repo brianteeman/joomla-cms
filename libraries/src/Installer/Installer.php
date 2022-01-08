@@ -1213,9 +1213,15 @@ class Installer extends Adapter
 								}
 								catch (ExecutionFailureException | PrepareStatementFailureException $e)
 								{
+									$errorMessage = Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $e->getMessage());
+
+									// Log the error in the update log file
 									Log::add(Text::sprintf('JLIB_INSTALLER_UPDATE_LOG_QUERY', $file, $queryString), Log::INFO, 'Update');
-									Log::add(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $e->getMessage()), Log::INFO, 'Update');
+									Log::add($errorMessage, Log::INFO, 'Update');
 									Log::add(Text::_('JLIB_INSTALLER_SQL_END_NOT_COMPLETE'), Log::INFO, 'Update');
+
+									// Show the error message to the user
+									Log::add($errorMessage, Log::WARNING, 'jerror');
 
 									return false;
 								}
