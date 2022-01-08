@@ -23,6 +23,7 @@ use Joomla\CMS\Table\Extension;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\Exception\ExecutionFailureException;
+use Joomla\Database\Exception\PrepareStatementFailureException;
 use Joomla\Database\ParameterType;
 
 /**
@@ -1210,7 +1211,7 @@ class Installer extends Adapter
 								{
 									$db->setQuery($query)->execute();
 								}
-								catch (ExecutionFailureException $e)
+								catch (ExecutionFailureException | PrepareStatementFailureException $e)
 								{
 									Log::add(Text::sprintf('JLIB_INSTALLER_UPDATE_LOG_QUERY', $file, $queryString), Log::INFO, 'Update');
 									Log::add(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $e->getMessage()), Log::INFO, 'Update');
