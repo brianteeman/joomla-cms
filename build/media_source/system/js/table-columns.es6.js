@@ -11,6 +11,16 @@ class TableColumns {
     this.$rows = [].slice.call($table.querySelectorAll('tbody tr'));
     this.listOfHidden = [];
 
+    // Find protected columns
+    this.protectedCols = [0];
+    if (this.$rows[0]) {
+      [].slice.call(this.$rows[0].children).forEach(($el, index) => {
+        if ($el.nodeName === 'TH') {
+          this.protectedCols.push(index);
+        }
+      });
+    }
+
     // Load previous state, and set up toggle menu
     this.loadState();
     this.createControls();
@@ -48,8 +58,8 @@ class TableColumns {
 
     // Collect a list of headers for dropdown
     this.$headers.forEach(($el, index) => {
-      // Skip the first column as we don't want to hide the row select checkbox
-      if (index === 0) return;
+      // Skip the protected columns
+      if (this.protectedCols.indexOf(index) !== -1) return;
 
       const $li = document.createElement('li');
       const $label = document.createElement('label');
@@ -109,7 +119,7 @@ class TableColumns {
    * Update button text
    */
   updateCounter() {
-    const total = this.$headers.length - 1;
+    const total = this.$headers.length - this.protectedCols.length;
     const visible = total - this.listOfHidden.length;
 
     this.$button.textContent = `${visible}/${total} ${Joomla.Text._('JGLOBAL_COLUMNS')}`;
@@ -122,6 +132,9 @@ class TableColumns {
    * @param {Boolean} force To force hide
    */
   toggleColumn(index, force) {
+    // Skip the protected columns
+    if (this.protectedCols.indexOf(index) !== -1) return;
+
     const i = this.listOfHidden.indexOf(index);
 
     if (i === -1) {
