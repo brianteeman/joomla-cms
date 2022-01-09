@@ -11,18 +11,26 @@ class TableColumns {
     this.$rows = [].slice.call($table.querySelectorAll('tbody tr'));
     this.listOfHidden = [];
 
+    // Load previous state
+    this.loadState();
+
     // Find protected columns
     this.protectedCols = [0];
     if (this.$rows[0]) {
       [].slice.call(this.$rows[0].children).forEach(($el, index) => {
         if ($el.nodeName === 'TH') {
           this.protectedCols.push(index);
+
+          // Make sure in not in the list of hidden
+          const ih = this.listOfHidden.indexOf(index);
+          if (ih !== -1){
+            this.listOfHidden.splice(ih, 1);
+          }
         }
       });
     }
 
-    // Load previous state, and set up toggle menu
-    this.loadState();
+    // Set up toggle menu
     this.createControls();
 
     // Restore sate
