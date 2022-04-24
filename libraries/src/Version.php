@@ -253,7 +253,7 @@ final class Version
 	 * @since   3.2
 	 */
 	public function getMediaVersion(): string
-	{
+	{return '';
 		// Load the media version and cache it for future use
 		if (self::$mediaVersion === null)
 		{

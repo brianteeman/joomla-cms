@@ -424,6 +424,11 @@ trait DisplayTrait
 			$plugins   = array_merge($plugins, explode(strpos($custom_plugin, ',') !== false ? ',' : ' ', $custom_plugin));
 		}
 
+		// Version 6 unload removed plugins
+		$plugins = array_filter($plugins, function($plugin) {
+			return !in_array($plugin, ['hr', 'paste', 'print']);
+		});
+
 		if ($custom_button)
 		{
 			$toolbar1  = array_merge($toolbar1, explode(strpos($custom_button, ',') !== false ? ',' : ' ', $custom_button));
