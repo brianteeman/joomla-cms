@@ -22,7 +22,7 @@ use Joomla\CMS\Session\Session;
 /** @var \Joomla\CMS\WebAsset\WebAssetManager $wa */
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('table.columns')
-    // ->useScript('multiselect')
+    ->useScript('multiselect')
     ->useScript('bootstrap.collapse');
 
 $user      = Factory::getUser();
@@ -59,7 +59,7 @@ $assoc   = Associations::isEnabled() && $this->state->get('filter.client_id') ==
                         <thead>
                         <tr>
                             <td class="w-1 text-center">
-                            <span class="fa fa-folder" aria-hidden="true"></span>C/E
+                                <span class="fa fa-folder" aria-hidden="true"></span>
                             </td>
                             <td class="w-1 text-center">
                                 <?php echo HTMLHelper::_('grid.checkall'); ?>
@@ -140,8 +140,8 @@ $assoc   = Associations::isEnabled() && $this->state->get('filter.client_id') ==
                             $parentsClass = ($parentsStr != '') ? str_replace(' ', ' parent-', $parentsStr) : '';
                             $btnDisabled = ($item->rgt - $item->lft == 1) ? ' disabled' : '';
                             ?>
-                            <tr class="row<?php echo $i % 2; ?> show <?php echo $parentsClass; ?>"
-                            data-draggable-group="<?php echo $item->parent_id; ?>"
+                            <tr class="row<?php echo $i % 2; ?> show<?php echo $parentsClass; ?>"
+                                data-draggable-group="<?php echo $item->parent_id; ?>"
                                 data-item-id="<?php echo $item->id; ?>" data-parents="<?php echo $parentsStr; ?>"
                                 data-level="<?php echo $item->level; ?>">
                                 <td>
