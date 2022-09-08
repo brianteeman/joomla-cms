@@ -135,11 +135,23 @@ $assoc   = Associations::isEnabled() && $this->state->get('filter.client_id') ==
                             } else {
                                 $parentsStr = '';
                             }
+
+                            // use the parentstr to set a parentClass
+                            $parentsClass = ($parentsStr != '') ? str_replace(' ', ' parent-', $parentsStr) : '';
+                            $btnDisabled = ($item->rgt - $item->lft == 1) ? ' disabled' : '';
                             ?>
-                            <tr class="row<?php echo $i % 2; ?> show bs-<?php echo $item->parent_id; ?>" data-draggable-group="<?php echo $item->parent_id; ?>"
+                            <tr class="row<?php echo $i % 2; ?> show <?php echo $parentsClass; ?>"
+                            data-draggable-group="<?php echo $item->parent_id; ?>"
                                 data-item-id="<?php echo $item->id; ?>" data-parents="<?php echo $parentsStr; ?>"
                                 data-level="<?php echo $item->level; ?>">
-                                <td><button class="btn btn-sm btn-info" type="button" data-bs-toggle="collapse" data-bs-target=".bs-<?php echo $item->id; ?>" aria-expanded="true"><span class="fa fa-folder" aria-hidden="true"></span><span class="sr-only">Expand</span></button></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info<?php echo $btnDisabled; ?>" type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target=".parent-<?php echo $item->id; ?>"
+                                        aria-expanded="true">
+                                        <span class="fa fa-folder" aria-hidden="true"></span><span class="sr-only">Expand</span>
+                                    </button>
+                                </td>
                                 <td class="text-center">
                                     <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->title); ?>
                                 </td>
