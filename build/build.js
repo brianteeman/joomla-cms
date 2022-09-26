@@ -115,12 +115,12 @@ if (cliOptions.compileJs) {
     .catch((err) => handleError(err, 1));
 }
 
-// Compress/transpile the javascript files
+// Watch javascript files
 if (cliOptions.watch) {
   watching(Program.args[0]);
 }
 
-// Gzip js/css files
+// Compile Bootstrap javascript files
 if (cliOptions.compileBs) {
   bootstrapJs();
 }
