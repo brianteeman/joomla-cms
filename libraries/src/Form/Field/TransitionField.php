@@ -164,7 +164,7 @@ class TransitionField extends GroupedlistField
         $default = [[
             HTMLHelper::_('select.option', '', Text::_($workflowName))]];
 
-        $groups = parent::getGroups();        
+        $groups = parent::getGroups();
 
         $groups[Text::_('COM_CONTENT_RUN_TRANSITION')] = $items;
 
