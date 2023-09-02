@@ -8,7 +8,7 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\Extension\PluginInterface;
 use Joomla\CMS\Factory;
@@ -36,7 +36,7 @@ return new class () implements ServiceProviderInterface {
             function (Container $container) {
                 $plugin     = PluginHelper::getPlugin('behaviour', 'compat');
                 $dispatcher = $container->get(DispatcherInterface::class);
-                $profiler   = (defined('JDEBUG') && JDEBUG) ? Profiler::getInstance('Application') : null;
+                $profiler   = (\defined('JDEBUG') && JDEBUG) ? Profiler::getInstance('Application') : null;
                 $router     = $container->has(SiteRouter::class) ? $container->get(SiteRouter::class) : null;
 
                 $plugin = new Compat($dispatcher, (array) $plugin, $profiler, $router);

@@ -84,6 +84,8 @@ $config
             'global_namespace_import'        => ['import_classes' => false, 'import_constants' => false, 'import_functions' => false],
             // Alpha order imports
             'ordered_imports'                => ['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'alpha'],
+            // Native function invocation
+            'native_function_invocation'     => ['include' => ['@compiler_optimized']],
         ]
     )
     ->setFinder($finder);

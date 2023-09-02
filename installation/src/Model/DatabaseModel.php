@@ -14,7 +14,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Installation\Helper\DatabaseHelper;
 use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Utilities\ArrayHelper;
@@ -212,12 +211,12 @@ class DatabaseModel extends BaseInstallationModel
         }
 
         // @internal Check for spaces in beginning or end of name.
-        if (strlen(trim($options->db_name)) <> strlen($options->db_name)) {
+        if (\strlen(trim($options->db_name)) <> \strlen($options->db_name)) {
             throw new \RuntimeException(Text::_('INSTL_DATABASE_NAME_INVALID_SPACES'));
         }
 
         // @internal Check for asc(00) Null in name.
-        if (strpos($options->db_name, chr(00)) !== false) {
+        if (strpos($options->db_name, \chr(00)) !== false) {
             throw new \RuntimeException(Text::_('INSTL_DATABASE_NAME_INVALID_CHAR'));
         }
 
@@ -483,7 +482,7 @@ class DatabaseModel extends BaseInstallationModel
         $query = $funct[0];
 
         // Parse the schema file to break up queries.
-        for ($i = 0; $i < strlen($query) - 1; $i++) {
+        for ($i = 0; $i < \strlen($query) - 1; $i++) {
             if ($query[$i] == ';' && !$in_string) {
                 $queries[] = substr($query, 0, $i);
                 $query     = substr($query, $i + 1);
@@ -509,7 +508,7 @@ class DatabaseModel extends BaseInstallationModel
         }
 
         // Add function part as is.
-        for ($f = 1, $fMax = count($funct); $f < $fMax; $f++) {
+        for ($f = 1, $fMax = \count($funct); $f < $fMax; $f++) {
             $queries[] = 'CREATE OR REPLACE FUNCTION ' . $funct[$f];
         }
 

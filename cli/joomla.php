@@ -25,12 +25,12 @@ if (version_compare(PHP_VERSION, JOOMLA_MINIMUM_PHP, '<')) {
 }
 
 // Load system defines
-if (file_exists(dirname(__DIR__) . '/defines.php')) {
-    require_once dirname(__DIR__) . '/defines.php';
+if (file_exists(\dirname(__DIR__) . '/defines.php')) {
+    require_once \dirname(__DIR__) . '/defines.php';
 }
 
-if (!defined('_JDEFINES')) {
-    define('JPATH_BASE', dirname(__DIR__));
+if (!\defined('_JDEFINES')) {
+    \define('JPATH_BASE', \dirname(__DIR__));
     require_once JPATH_BASE . '/includes/defines.php';
 }
 
@@ -43,8 +43,8 @@ if (!file_exists(JPATH_LIBRARIES . '/vendor/autoload.php') || !is_dir(JPATH_ROOT
     exit;
 }
 
-if (!defined('JPATH_PUBLIC')) {
-    define('JPATH_PUBLIC', JPATH_ROOT);
+if (!\defined('JPATH_PUBLIC')) {
+    \define('JPATH_PUBLIC', JPATH_ROOT);
 }
 
 // Check if installed
