@@ -737,9 +737,9 @@ class Installer extends Adapter implements DatabaseAwareInterface
         PluginHelper::importPlugin('extension', null, true, $dispatcher);
         $dispatcher->dispatch('onExtensionBeforeInstall', new BeforeInstallEvent('onExtensionBeforeInstall', [
             'method'    => 'discover_install',
-            'type'      => $this->extension->get('type'),
+            'type'      => $this->extension->type,
             'manifest'  => null,
-            'extension' => (int) $this->extension->get('extension_id'),
+            'extension' => (int) $this->extension->extension_id,
         ]));
 
         // Run the install
@@ -1265,7 +1265,7 @@ class Installer extends Adapter implements DatabaseAwareInterface
                 continue;
             }
 
-            $buffer = file_get_contents(sprintf("%s/%s/%s.sql", $this->getPath('extension_root'), $schemapath, $file));
+            $buffer = file_get_contents(\sprintf("%s/%s/%s.sql", $this->getPath('extension_root'), $schemapath, $file));
 
             // Graceful exit and rollback if read not successful
             if ($buffer === false) {
@@ -2311,12 +2311,13 @@ class Installer extends Adapter implements DatabaseAwareInterface
         $data['creationDate'] = ((string) $xml->creationDate) ?: Text::_('JLIB_UNKNOWN');
         $data['author']       = ((string) $xml->author) ?: Text::_('JLIB_UNKNOWN');
 
-        $data['copyright']   = (string) $xml->copyright;
-        $data['authorEmail'] = (string) $xml->authorEmail;
-        $data['authorUrl']   = (string) $xml->authorUrl;
-        $data['version']     = (string) $xml->version;
-        $data['description'] = (string) $xml->description;
-        $data['group']       = (string) $xml->group;
+        $data['copyright']    = (string) $xml->copyright;
+        $data['authorEmail']  = (string) $xml->authorEmail;
+        $data['authorUrl']    = (string) $xml->authorUrl;
+        $data['version']      = (string) $xml->version;
+        $data['description']  = (string) $xml->description;
+        $data['group']        = (string) $xml->group;
+        $data['changelogurl'] = (string) $xml->changelogurl;
 
         // Child template specific fields.
         if (isset($xml->inheritable)) {
@@ -2435,7 +2436,7 @@ class Installer extends Adapter implements DatabaseAwareInterface
         }
 
         if (!class_exists($class)) {
-            throw new \InvalidArgumentException(sprintf('The %s install adapter does not exist.', $adapter));
+            throw new \InvalidArgumentException(\sprintf('The %s install adapter does not exist.', $adapter));
         }
 
         // Ensure the adapter type is part of the options array

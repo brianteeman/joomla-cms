@@ -64,6 +64,7 @@
           v-for="item in localItems"
           :key="item.path"
           :item="item"
+          :localItems="localItems"
         />
       </div>
     </div>
@@ -218,6 +219,7 @@ export default {
               bubbles: true,
               cancelable: false,
               detail: {
+                name: '',
                 path: '',
                 thumb: false,
                 fileType: false,

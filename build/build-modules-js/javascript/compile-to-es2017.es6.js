@@ -8,9 +8,16 @@ const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const replace = require('@rollup/plugin-replace');
 const { babel } = require('@rollup/plugin-babel');
 const LightningCSS = require('lightningcss');
-const { renderSync } = require('sass-embedded');
+const { compile } = require('sass-embedded');
 const { minifyJsCode } = require('./minify.es6.js');
 const { getPackagesUnderScope } = require('../init/common/resolve-package.es6.js');
+
+function esmOrIife(file) {
+  if (file.endsWith('core.es6.js') || file.endsWith('validate.es6.js')) {
+    return 'iife';
+  }
+  return 'es';
+}
 
 const getWcMinifiedCss = async (file) => {
   let scssFileExists = false;
@@ -26,7 +33,7 @@ const getWcMinifiedCss = async (file) => {
   if (scssFileExists) {
     let compiled;
     try {
-      compiled = renderSync({ file: scssFile });
+      compiled = compile(scssFile);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(`${error.column}
@@ -126,7 +133,7 @@ module.exports.handleESMFile = async (file) => {
   });
 
   bundle.write({
-    format: 'es',
+    format: esmOrIife(file),
     sourcemap: false,
     file: resolve(`${newPath}.js`),
   })

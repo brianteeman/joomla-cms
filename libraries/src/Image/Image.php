@@ -123,6 +123,7 @@ class Image
             static::$formats[IMAGETYPE_PNG]  = $info['PNG Support'];
             static::$formats[IMAGETYPE_GIF]  = $info['GIF Read Support'];
             static::$formats[IMAGETYPE_WEBP] = $info['WebP Support'];
+            static::$formats[IMAGETYPE_AVIF] = $info['AVIF Support'];
         }
 
         // If the source input is a resource, set it as the image handle.
@@ -434,12 +435,30 @@ class Image
 
         if ($this->isTransparent()) {
             // Get the transparent color values for the current image.
-            $rgba  = imagecolorsforindex($this->getHandle(), imagecolortransparent($this->getHandle()));
-            $color = imagecolorallocatealpha($handle, $rgba['red'], $rgba['green'], $rgba['blue'], $rgba['alpha']);
-
-            // Set the transparent color values for the new image.
-            imagecolortransparent($handle, $color);
-            imagefill($handle, 0, 0, $color);
+            $ict  = imagecolortransparent($this->getHandle());
+            $ctot = imagecolorstotal($this->getHandle());
+            // Sanitize imagecolortransparent & imagecolorstotal
+            if ($ctot === 255 && $ict === 255) {
+                $ict = 254;
+            }
+            if ($ctot === 0 && $ict === 0) {
+                $ctot = 1;
+            }
+            if ($ict >= 0 && $ict < $ctot) {
+                $rgba = imagecolorsforindex($this->getHandle(), $ict);
+                if (!empty($rgba)) {
+                    $color = imagecolorallocatealpha(
+                        $handle,
+                        $rgba['red'],
+                        $rgba['green'],
+                        $rgba['blue'],
+                        $rgba['alpha']
+                    );
+                    // Set the transparent color values for the new image.
+                    imagecolortransparent($handle, $color);
+                    imagefill($handle, 0, 0, $color);
+                }
+            }
         }
 
         if (!$this->generateBestQuality) {
@@ -583,6 +602,18 @@ class Image
 
         // Attempt to load the image based on the MIME-Type
         switch ($properties->mime) {
+            case 'image/avif':
+                // Make sure the image type is supported.
+                if (empty(static::$formats[IMAGETYPE_AVIF])) {
+                    throw new \RuntimeException('Attempting to load an image of unsupported type AVIF.');
+                }
+
+                // Attempt to create the image handle.
+                $handle = imagecreatefromavif($path);
+                $type   = 'AVIF';
+
+                break;
+
             case 'image/gif':
                 // Make sure the image type is supported.
                 if (empty(static::$formats[IMAGETYPE_GIF])) {
@@ -701,12 +732,30 @@ class Image
 
         if ($this->isTransparent()) {
             // Get the transparent color values for the current image.
-            $rgba  = imagecolorsforindex($this->getHandle(), imagecolortransparent($this->getHandle()));
-            $color = imagecolorallocatealpha($handle, $rgba['red'], $rgba['green'], $rgba['blue'], $rgba['alpha']);
-
-            // Set the transparent color values for the new image.
-            imagecolortransparent($handle, $color);
-            imagefill($handle, 0, 0, $color);
+            $ict  = imagecolortransparent($this->getHandle());
+            $ctot = imagecolorstotal($this->getHandle());
+            // Sanitize imagecolortransparent & imagecolorstotal
+            if ($ctot === 255 && $ict === 255) {
+                $ict = 254;
+            }
+            if ($ctot === 0 && $ict === 0) {
+                $ctot = 1;
+            }
+            if ($ict >= 0 && $ict < $ctot) {
+                $rgba = imagecolorsforindex($this->getHandle(), $ict);
+                if (!empty($rgba)) {
+                    $color = imagecolorallocatealpha(
+                        $handle,
+                        $rgba['red'],
+                        $rgba['green'],
+                        $rgba['blue'],
+                        $rgba['alpha']
+                    );
+                    // Set the transparent color values for the new image.
+                    imagecolortransparent($handle, $color);
+                    imagefill($handle, 0, 0, $color);
+                }
+            }
         }
 
         if (!$this->generateBestQuality) {
@@ -919,6 +968,9 @@ class Image
     public function toFile($path, $type = IMAGETYPE_JPEG, array $options = [])
     {
         switch ($type) {
+            case IMAGETYPE_AVIF:
+                return imageavif($this->getHandle(), $path, (\array_key_exists('quality', $options)) ? $options['quality'] : 100);
+
             case IMAGETYPE_GIF:
                 return imagegif($this->getHandle(), $path);
 

@@ -16,7 +16,9 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Component\Router\RouterBase;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Menu\AbstractMenu;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Database\DatabaseInterface;
+use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -48,12 +50,22 @@ class Router extends RouterBase
     protected $lookup = [];
 
     /**
+     * System - SEF Plugin parameters
+     *
+     * @var   Registry
+     * @since 5.2.0
+     * @deprecated  5.2.0 will be removed in 6.0
+     *              without replacement
+     */
+    private $sefparams;
+
+    /**
      * Tags Component router constructor
      *
-     * @param   SiteApplication           $app              The application object
-     * @param   AbstractMenu              $menu             The menu object to work with
-     * @param   CategoryFactoryInterface  $categoryFactory  The category object
-     * @param   DatabaseInterface         $db               The database object
+     * @param   SiteApplication            $app              The application object
+     * @param   AbstractMenu               $menu             The menu object to work with
+     * @param   ?CategoryFactoryInterface  $categoryFactory  The category object
+     * @param   DatabaseInterface          $db               The database object
      *
      * @since  4.0.0
      */
@@ -62,6 +74,14 @@ class Router extends RouterBase
         $this->db = $db;
 
         parent::__construct($app, $menu);
+
+        $sefPlugin       = PluginHelper::getPlugin('system', 'sef');
+
+        if ($sefPlugin) {
+            $this->sefparams = new Registry($sefPlugin->params);
+        } else {
+            $this->sefparams = new Registry();
+        }
 
         $this->buildLookup();
     }
@@ -141,12 +161,15 @@ class Router extends RouterBase
             }
         }
 
-        // If not found, return language specific home link
-        if (!isset($query['Itemid'])) {
-            $default = $this->menu->getDefault($lang);
+        // TODO: Remove this whole block in 6.0 as it is a bug
+        if (!$this->sefparams->get('strictrouting', 0)) {
+            // If not found, return language specific home link
+            if (!isset($query['Itemid'])) {
+                $default = $this->menu->getDefault($lang);
 
-            if (!empty($default->id)) {
-                $query['Itemid'] = $default->id;
+                if (!empty($default->id)) {
+                    $query['Itemid'] = $default->id;
+                }
             }
         }
 
@@ -255,15 +278,44 @@ class Router extends RouterBase
             $vars['view'] = array_shift($segments);
         }
 
-        $ids = [];
+        $ids          = [];
+        $matchedAlias = false;
 
         if ($item && $item->query['view'] == 'tag') {
             $ids = $item->query['id'];
         }
 
+        // Iterate through all URL segments and try to parse tag IDs from them
         while (\count($segments)) {
             $id    = array_shift($segments);
-            $ids[] = $this->fixSegment($id);
+
+            // We have a numeric ID
+            if (!$matchedAlias && is_numeric($id)) {
+                $ids[] = $id;
+
+                // We allow more than one numeric segment in the URL
+                continue;
+            }
+
+            // We have a comma-separated list of IDs
+            if (!$matchedAlias && str_contains($id, ',')) {
+                $ids[] = $id;
+
+                // We don't allow more than one list of IDs in a URL
+                break;
+            }
+
+            $slug  = $this->fixSegment($id);
+
+            // We did not find the segment as a tag in the DB
+            if ($slug === $id) {
+                array_unshift($segments, $id);
+                break;
+            }
+
+            // We don't want to match numeric or comma-separated segments after we matched an alias
+            $matchedAlias = true;
+            $ids[]        = $slug;
         }
 
         if (\count($ids)) {
