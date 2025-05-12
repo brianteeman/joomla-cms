@@ -76,7 +76,10 @@ final class Accessibility extends CMSPlugin implements SubscriberInterface
         $language  = $app->getLanguage();
 
         // Determine if it is an LTR or RTL language
-        $direction = $language->isRtl() ? 'right' : 'left';
+        $position = $language->isRtl() ? 'right' : 'left';
+
+        // Change the position of the icon if it is set in the plugin parameters.
+        $position = $this->params->get('icon_position', $position);
 
         // Detect the current active language
         $lang = $language->getTag();
