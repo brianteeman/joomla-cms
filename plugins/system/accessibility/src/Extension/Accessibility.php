@@ -10,7 +10,9 @@
 
 namespace Joomla\Plugin\System\Accessibility\Extension;
 
+use Joomla\CMS\Event\Application\BeforeCompileHeadEvent;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\Event\SubscriberInterface;
 use Joomla\CMS\Uri\Uri;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -22,46 +24,62 @@ use Joomla\CMS\Uri\Uri;
  *
  * @since  4.0.0
  */
-final class Accessibility extends CMSPlugin
+final class Accessibility extends CMSPlugin implements SubscriberInterface
 {
     /**
+     * Returns an array of events this subscriber will listen to.
+     *
+     * @return array
+     *
+     * @since   5.3.0
+     */
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            'onBeforeCompileHead' => 'onBeforeCompileHead',
+        ];
+    }
+
+    /**
      * Add the javascript for the accessibility menu
+     *
+     * @param  BeforeCompileHeadEvent $event  The event object
      *
      * @return  void
      *
      * @since   4.0.0
      */
-    public function onBeforeCompileHead()
+    public function onBeforeCompileHead(BeforeCompileHeadEvent $event): void
     {
         $section = $this->params->get('section', 'administrator');
+        $app     = $event->getApplication();
 
-        if ($section !== 'both' && $this->getApplication()->isClient($section) !== true) {
+        if ($section !== 'both' && $app->isClient($section) !== true) {
             return;
         }
 
         // Get the document object.
-        $document = $this->getApplication()->getDocument();
+        $document = $event->getDocument();
 
         if ($document->getType() !== 'html') {
             return;
         }
 
         // Are we in a modal?
-        if ($this->getApplication()->getInput()->get('tmpl', '', 'cmd') === 'component') {
+        if ($app->getInput()->get('tmpl', '', 'cmd') === 'component') {
             return;
         }
 
         // Load language file.
         $this->loadLanguage();
 
-        // Determine if it is an LTR or RTL language and set the default position of the icon.
-        $position = $this->getApplication()->getLanguage()->isRtl() ? 'right' : 'left';
+        $language  = $app->getLanguage();
 
-        // Change the position of the icon if it is set in the plugin parameters.
-        $position = $this->params->get('icon_position', $position);
+        // Determine if it is an LTR or RTL language
+        $direction = $language->isRtl() ? 'right' : 'left';
 
         // Detect the current active language
-        $lang = $this->getApplication()->getLanguage()->getTag();
+        $lang = $language->getTag();
 
         $iframeModals         = [];
         $accessibilityArticle = $this->params->get('accessibility_article');
@@ -88,24 +106,20 @@ final class Accessibility extends CMSPlugin
             'accessibility-options',
             [
                 'labels' => [
-                    'bigCursor'           => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_CURSOR'),
-                    'closeTitle'          => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_CLOSE'),
-                    'decreaseLineHeight'  => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_DECREASE_LINE_HEIGHT'),
-                    'decreaseText'        => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_DECREASE_TEXT'),
-                    'decreaseTextSpacing' => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_DECREASE_SPACING'),
-                    'disableAnimations'   => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_DISABLE_ANIMATIONS'),
-                    'grayHues'            => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_GREY'),
-                    'hotkeyPrefix'        => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_HOTKEY_PREFIX'),
-                    'increaseLineHeight'  => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_INCREASE_LINE_HEIGHT'),
-                    'increaseText'        => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_INCREASE_TEXT'),
-                    'increaseTextSpacing' => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_INCREASE_SPACING'),
-                    'invertColors'        => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_INVERT_COLORS'),
-                    'menuTitle'           => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_MENU_TITLE'),
-                    'readingGuide'        => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_READING'),
-                    'resetTitle'          => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_RESET'),
-                    'speechToText'        => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_STT'),
-                    'textToSpeech'        => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_TTS'),
-                    'underlineLinks'      => $this->getApplication()->getLanguage()->_('PLG_SYSTEM_ACCESSIBILITY_UNDERLINE'),
+                    'menuTitle'           => $language->_('PLG_SYSTEM_ACCESSIBILITY_MENU_TITLE'),
+                    'increaseText'        => $language->_('PLG_SYSTEM_ACCESSIBILITY_INCREASE_TEXT'),
+                    'decreaseText'        => $language->_('PLG_SYSTEM_ACCESSIBILITY_DECREASE_TEXT'),
+                    'increaseTextSpacing' => $language->_('PLG_SYSTEM_ACCESSIBILITY_INCREASE_SPACING'),
+                    'decreaseTextSpacing' => $language->_('PLG_SYSTEM_ACCESSIBILITY_DECREASE_SPACING'),
+                    'invertColors'        => $language->_('PLG_SYSTEM_ACCESSIBILITY_INVERT_COLORS'),
+                    'grayHues'            => $language->_('PLG_SYSTEM_ACCESSIBILITY_GREY'),
+                    'underlineLinks'      => $language->_('PLG_SYSTEM_ACCESSIBILITY_UNDERLINE'),
+                    'bigCursor'           => $language->_('PLG_SYSTEM_ACCESSIBILITY_CURSOR'),
+                    'readingGuide'        => $language->_('PLG_SYSTEM_ACCESSIBILITY_READING'),
+                    'textToSpeech'        => $language->_('PLG_SYSTEM_ACCESSIBILITY_TTS'),
+                    'speechToText'        => $language->_('PLG_SYSTEM_ACCESSIBILITY_STT'),
+                    'resetTitle'          => $language->_('PLG_SYSTEM_ACCESSIBILITY_RESET'),
+                    'closeTitle'          => $language->_('PLG_SYSTEM_ACCESSIBILITY_CLOSE'),
                 ],
                 'icon' => [
                     'position' => [

@@ -14,6 +14,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Table\Table;
@@ -37,12 +38,13 @@ class ArticlesModel extends ListModel
     /**
      * Constructor.
      *
-     * @param   array  $config  An optional associative array of configuration settings.
+     * @param   array                 $config   An optional associative array of configuration settings.
+     * @param   ?MVCFactoryInterface  $factory  The factory.
      *
      * @since   1.6
      * @see     \Joomla\CMS\MVC\Controller\BaseController
      */
-    public function __construct($config = [])
+    public function __construct($config = [], ?MVCFactoryInterface $factory = null)
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = [
@@ -81,7 +83,7 @@ class ArticlesModel extends ListModel
             }
         }
 
-        parent::__construct($config);
+        parent::__construct($config, $factory);
     }
 
     /**
@@ -102,11 +104,6 @@ class ArticlesModel extends ListModel
 
         if (!$params->get('workflow_enabled')) {
             $form->removeField('stage', 'filter');
-        } else {
-            $ordering = $form->getField('fullordering', 'list');
-
-            $ordering->addOption('JSTAGE_ASC', ['value' => 'ws.title ASC']);
-            $ordering->addOption('JSTAGE_DESC', ['value' => 'ws.title DESC']);
         }
 
         return $form;
@@ -403,18 +400,49 @@ class ArticlesModel extends ListModel
 
         if (is_numeric($authorId)) {
             $authorId = (int) $authorId;
-            $type     = $this->getState('filter.author_id.include', true) ? ' = ' : ' <> ';
-            $query->where($db->quoteName('a.created_by') . $type . ':authorId')
-                ->bind(':authorId', $authorId, ParameterType::INTEGER);
+
+            if ($authorId === 0) {
+                // Only show deleted authors' articles
+                $subQuery = $db->getQuery(true)
+                    ->select($db->quoteName('id'))
+                    ->from($db->quoteName('#__users'));
+
+                $query->where($db->quoteName('a.created_by') . ' NOT IN (' . $subQuery . ')');
+            } else {
+                $type = $this->getState('filter.author_id.include', true) ? ' = ' : ' <> ';
+                $query->where($db->quoteName('a.created_by') . $type . ':authorId')
+                    ->bind(':authorId', $authorId, ParameterType::INTEGER);
+            }
         } elseif (\is_array($authorId)) {
             // Check to see if by_me is in the array
-            if (\in_array('by_me', $authorId)) {
+            $keyByMe = array_search('by_me', $authorId);
+
+            if ($keyByMe !== false) {
                 // Replace by_me with the current user id in the array
-                $authorId['by_me'] = $user->id;
+                $authorId[$keyByMe] = $user->id;
             }
 
             $authorId = ArrayHelper::toInteger($authorId);
-            $query->whereIn($db->quoteName('a.created_by'), $authorId);
+
+            if (\in_array(0, $authorId)) {
+                // Remove 0 from array and handle deleted users with OR condition
+                $authorId = array_filter($authorId);
+
+                // Subquery for deleted users
+                $subQuery = $db->getQuery(true)
+                    ->select($db->quoteName('id'))
+                    ->from($db->quoteName('#__users'));
+
+                // Build WHERE with both conditions
+                $query->where('(' .
+                    $db->quoteName('a.created_by') . ' NOT IN (' . $subQuery . ')' .
+                    (!empty($authorId)
+                        ? ' OR ' . $db->quoteName('a.created_by') . ' IN (' . implode(',', $query->bindArray($authorId)) . ')'
+                        : '') .
+                ')');
+            } else {
+                $query->whereIn($db->quoteName('a.created_by'), $authorId);
+            }
         }
 
         // Filter by search in title.

@@ -75,7 +75,7 @@
 			hint="JOPTION_SELECT_AUTHOR"
 			class="js-select-submit-on-change"
 			>
-			<option value="0">JNONE</option>
+			<option value="0">JNONE_FILTER</option>
 			<option value="by_me">COM_CONTENT_FILTER_AUTHORS_BY_ME</option>
 		</field>
 
@@ -126,6 +126,8 @@
 			<option value="">JGLOBAL_SORT_BY</option>
 			<option value="a.ordering ASC">JGRID_HEADING_ORDERING_ASC</option>
 			<option value="a.ordering DESC">JGRID_HEADING_ORDERING_DESC</option>
+			<option value="ws.title ASC" requires="workflow">JSTAGE_ASC</option>
+			<option value="ws.title DESC" requires="workflow">JSTAGE_DESC</option>
 			<option value="a.featured ASC">JFEATURED_ASC</option>
 			<option value="a.featured DESC">JFEATURED_DESC</option>
 			<option value="a.state ASC">JSTATUS_ASC</option>
