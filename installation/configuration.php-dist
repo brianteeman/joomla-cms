@@ -72,6 +72,7 @@ class JConfig
 	public $session_memcached_server_host = 'localhost';
 	public $session_memcached_server_port = 11211;
 	public $session_metadata = true;
+	public $session_metadata_for_guest = 1;
 	public $session_redis_persist = 1;
 	public $session_redis_server_auth = '';
 	public $session_redis_server_db = 0;
