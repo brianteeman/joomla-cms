@@ -57,7 +57,7 @@
     "@webcomponents/webcomponentsjs": "^2.8.0",
     "accessibility": "^3.0.17",
     "awesomplete": "^1.1.7",
-    "bootstrap": "5.3.3",
+    "bootstrap": "5.3.8",
     "choices.js": "^9.1.0",
     "chosen-js": "^1.8.7",
     "cropperjs": "^1.6.2",
