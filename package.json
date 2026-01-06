@@ -47,7 +47,7 @@
     "@codemirror/lang-php": "^6.0.1",
     "@codemirror/lang-xml": "^6.1.0",
     "@codemirror/language": "^6.11.0",
-    "@codemirror/lint": "^6.8.4",
+    "@codemirror/lint": "^6.9.2",
     "@codemirror/search": "^6.5.10",
     "@codemirror/state": "^6.5.2",
     "@codemirror/theme-one-dark": "^6.1.2",
