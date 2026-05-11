@@ -3,8 +3,8 @@
  */
 
 import fsp from 'node:fs/promises';
-import path from "node:path";
-import fs from "node:fs";
+import path from 'node:path';
+import fs from 'node:fs';
 
 import { transform } from 'esbuild';
 import { rollup } from 'rollup';
@@ -15,6 +15,7 @@ import { getPackagesUnderScope } from '../utils/resolve-package.mjs';
 // List of external modules that should not be resolved by rollup
 // @TODO: Make it configurable somehow?
 const externalModules = [];
+
 const getExternalModules = async () => {
   if (externalModules.length) {
     return externalModules;
@@ -33,10 +34,13 @@ const getExternalModules = async () => {
 
   // Codemirror modules
   const cmModules = getPackagesUnderScope('@codemirror');
+
   if (cmModules) {
     externalModules.push(...cmModules);
   }
+
   const lezerModules = getPackagesUnderScope('@lezer');
+
   if (lezerModules) {
     externalModules.push(...lezerModules);
   }
@@ -47,18 +51,19 @@ const getExternalModules = async () => {
 /**
  * Minify JS content
  *
- * @param   { String } content
- * @returns { Promise<String> }
+ * @param   {String} content
+ * @returns {Promise<String>}
  */
-export const minifyJSContent = async (content = '') => transform(content, { minify: true })
-  .then((result) => result.code);
+export const minifyJSContent = async (content = '') => transform(content, {
+  minify: true,
+}).then((result) => result.code);
 
 /**
  * Handle JS file without extra processing. Just minification.
  *
- * @param { String } srcPath
- * @param { String } targetPath
- * @returns { Promise }
+ * @param {String} srcPath
+ * @param {String} targetPath
+ * @returns {Promise}
  */
 export const handleJSFile = async (srcPath, targetPath) => {
   const targetFolder = path.dirname(targetPath);
@@ -67,93 +72,149 @@ export const handleJSFile = async (srcPath, targetPath) => {
     fs.mkdirSync(targetFolder, { mode: 0o755, recursive: true });
   }
 
-  return fsp.readFile(srcPath, { encoding: 'utf8' }).then((content) => {
-    return minifyJSContent(content).then((jsMin) => {
-      // Copy source
-      const saveCopy = (srcPath !== targetPath) ? fsp.copyFile(srcPath, targetPath) : Promise.resolve();
+  return fsp.readFile(srcPath, { encoding: 'utf8' })
+    .then((content) => {
+      return minifyJSContent(content).then((jsMin) => {
+        // Copy source
+        const saveCopy = (srcPath !== targetPath)
+          ? fsp.copyFile(srcPath, targetPath)
+          : Promise.resolve();
 
-      // Store minified version
-      const saveMin = fsp.writeFile(
-        targetPath.replace('.js', '.min.js'),
-        jsMin,
-        { encoding: 'utf8', mode: 0o644 }
-      );
+        // Store minified version
+        const saveMin = fsp.writeFile(
+          targetPath.replace('.js', '.min.js'),
+          jsMin,
+          { encoding: 'utf8', mode: 0o644 },
+        );
 
-      return Promise.all([saveCopy, saveMin]);
+        return Promise.all([saveCopy, saveMin]);
+      });
+    })
+    .catch((error) => {
+      throw new Error(`Processing failed for "${srcPath}".`, { cause: error });
     });
-  }).catch((error) => {
-    throw new Error(`Processing failed for "${srcPath}".`, { cause: error });
-  });
 };
 
 /**
  * Handle JS file which requires extra processing.
  *
- * @param { String } srcPath
- * @param { String } targetPath
- * @param { string[] } externalModulesList
- * @returns { Promise }
+ * Supports multiple Rollup chunks.
+ *
+ * @param {String} srcPath
+ * @param {String} targetPath
+ * @param {string[]} externalModulesList
+ * @returns {Promise}
  */
-export const handleMJSFile = async (srcPath, targetPath, externalModulesList = []) => {
-  const externalModules =  externalModulesList && externalModulesList.length ? externalModulesList : await getExternalModules();
+export const handleMJSFile = async (
+  srcPath,
+  targetPath,
+  externalModulesList = [],
+) => {
+  const externalModulesResolved = (
+    externalModulesList && externalModulesList.length
+  )
+    ? externalModulesList
+    : await getExternalModules();
+
   const targetFolder = path.dirname(targetPath);
 
   if (!fs.existsSync(targetFolder)) {
     fs.mkdirSync(targetFolder, { mode: 0o755, recursive: true });
   }
 
-  return rollup({
-    input: srcPath,
-    plugins: [
-      nodeResolve({ preferBuiltins: false }),
-      babel({
-        exclude: 'node_modules/core-js/**',
-        babelHelpers: 'bundled',
-        babelrc: false,
-        presets: [
-          [
-            '@babel/preset-env',
-            {
-              targets: {
-                browsers: [
-                  '> 1%',
-                  'not op_mini all',
-                  /** https://caniuse.com/es6-module */
-                  'chrome >= 61',
-                  'safari >= 11',
-                  'edge >= 16',
-                  'Firefox >= 60',
-                ],
+  const format = targetPath.endsWith('core.js') ? 'iife' : 'es';
+
+  // Base filename without extension
+  // example:
+  // targetPath = media/system/js/messages.js
+  // entryFileName = messages.js
+  const entryFileName = path.basename(targetPath);
+
+  try {
+    const bundle = await rollup({
+      input: srcPath,
+      plugins: [
+        nodeResolve({ preferBuiltins: false }),
+        babel({
+          exclude: 'node_modules/core-js/**',
+          babelHelpers: 'bundled',
+          babelrc: false,
+          presets: [
+            [
+              '@babel/preset-env',
+              {
+                targets: {
+                  browsers: [
+                    '> 1%',
+                    'not op_mini all',
+
+                    /** https://caniuse.com/es6-module */
+                    'chrome >= 61',
+                    'safari >= 11',
+                    'edge >= 16',
+                    'Firefox >= 60',
+                  ],
+                },
+                bugfixes: true,
+                loose: true,
               },
-              bugfixes: true,
-              loose: true,
-            },
+            ],
           ],
-        ],
-      }),
-    ],
-    external: externalModules,
-  }).then(( bundle) => {
-    // Process and store source file
-    const result = bundle.write({
-      format: targetPath.endsWith('core.js') ? 'iife' : 'es',
-      sourcemap: false,
-      file: targetPath,
+        }),
+      ],
+      external: externalModulesResolved,
     });
 
-    // Minify the code and store
-    const saveMin = result
-      .then(( value ) => minifyJSContent(value.output[0].code))
-      .then(( jsMin ) => {
+    // Write all chunks
+    const result = await bundle.write({
+      format,
+      sourcemap: false,
+
+      // REQUIRED for multi-chunk output
+      dir: targetFolder,
+
+      // Main entry file name
+      entryFileNames: entryFileName,
+
+      // Dynamic/imported chunks
+      chunkFileNames: '[name]-[hash].js',
+
+      // Asset naming
+      assetFileNames: '[name]-[hash][extname]',
+    });
+
+    // Minify every emitted chunk
+    const minifyTasks = result.output
+      .filter((output) => output.type === 'chunk')
+      .map(async (chunk) => {
+        const jsMin = await minifyJSContent(chunk.code);
+
+        const minFileName = chunk.fileName.replace(
+          /\.js$/,
+          '.min.js',
+        );
+
+        const minTargetPath = path.join(
+          targetFolder,
+          minFileName,
+        );
+
         return fsp.writeFile(
-          targetPath.replace('.js', '.min.js'),
+          minTargetPath,
           jsMin,
-          { encoding: 'utf8', mode: 0o644 }
+          {
+            encoding: 'utf8',
+            mode: 0o644,
+          },
         );
       });
 
-    return saveMin.then(() => bundle.close());
-  }).catch((error) => {
-    throw new Error(`Processing failed for "${srcPath}".`, { cause: error });
-  });
+    await Promise.all(minifyTasks);
+
+    await bundle.close();
+  } catch (error) {
+    throw new Error(`Processing failed for "${srcPath}".`, {
+      cause: error,
+    });
+  }
 };
