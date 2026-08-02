@@ -314,14 +314,8 @@ class CssMenu implements DatabaseAwareInterface
                 continue;
             }
 
-            if (!empty($item->link) && str_starts_with($item->link, 'special:')) {
-                $special = substr($item->link, 8);
-
-                if ($special === 'language-forum') {
-                    $item->link = 'index.php?option=com_admin&amp;view=help&amp;layout=langforum';
-                } elseif ($special === 'custom-forum') {
-                    $item->link = $this->params->get('forum_url');
-                }
+            if ($item->link === 'special:language-forum') {
+                $item->link = 'index.php?option=com_admin&amp;view=help&amp;layout=langforum';
             }
 
             $uri   = new Uri($item->link);
