@@ -144,15 +144,15 @@ class ManageModel extends InstallerModel
 
                 if ($value === 0) {
                     // Parent template cannot be disabled if there are enabled children.
-                    $templateColumn  = 's.parent';
-                    $extensionColumn = 's.template';
-                    $enabled         = 1;
+                    $templateColumn   = 's.parent';
+                    $extensionColumn  = 's.template';
+                    $enabled          = 1;
                     $error            = 'COM_INSTALLER_ERROR_DISABLE_PARENT_TEMPLATE_NOT_PERMITTED';
                 } else {
                     // Child template cannot be enabled if its parent template is disabled.
-                    $templateColumn  = 's.template';
-                    $extensionColumn = 's.parent';
-                    $enabled         = 0;
+                    $templateColumn   = 's.template';
+                    $extensionColumn  = 's.parent';
+                    $enabled          = 0;
                     $error            = 'COM_INSTALLER_ERROR_ENABLE_CHILD_TEMPLATE_NOT_PERMITTED';
                 }
 
