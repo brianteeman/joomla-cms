@@ -3,4 +3,4 @@
 --
 
 ALTER TABLE "#__users"
-    ADD COLUMN "previousvisitDate" timestamp without time zone;
+    ADD COLUMN "previousvisitDate" timestamp without time zone /** CAN FAIL **/;
