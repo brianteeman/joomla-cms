@@ -247,6 +247,11 @@ class User extends Table
             $this->lastvisitDate = null;
         }
 
+        // Set the previousvisitDate timestamp
+        if (empty($this->previousvisitDate)) {
+            $this->previousvisitDate = null;
+        }
+
         // Set the lastResetTime timestamp
         if (empty($this->lastResetTime)) {
             $this->lastResetTime = null;
