@@ -535,6 +535,7 @@ class User extends Table
         $db    = $this->getDatabase();
         $query = $db->createQuery()
             ->update($db->quoteName($this->_tbl))
+            ->set($db->quoteName('previousvisitDate') . ' = ' . $db->quoteName('lastvisitDate'))
             ->set($db->quoteName('lastvisitDate') . ' = :lastvisitDate')
             ->where($db->quoteName('id') . ' = :id')
             ->bind(':lastvisitDate', $lastVisit)
