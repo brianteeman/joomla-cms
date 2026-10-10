@@ -483,7 +483,6 @@ trait DisplayTrait
             }
         }
 
-
         // Build the additional domains to exclude from iframe sandboxing.
         $sandboxIframesExclusions = [Uri::getInstance()->getHost()];
 
