@@ -483,20 +483,19 @@ trait DisplayTrait
             }
         }
 
-        // Add the current domain to the sandbox_iframes_exclusions list
-        $sandboxIframesExclusions = Uri::getInstance()->getHost();
 
-        // Build the list of additional domains to add to the sandbox_iframes_exclusions list
+        // Build the additional domains to exclude from iframe sandboxing.
+        $sandboxIframesExclusions = [Uri::getInstance()->getHost()];
+
         if (isset($extraOptions->sandbox_iframes_exclusions) && $extraOptions->sandbox_iframes_exclusions) {
-            $exclusionsArray = [];
             foreach ($extraOptions->sandbox_iframes_exclusions as $value) {
                 if (isset($value->exclusion_domain)) {
-                    $exclusionsArray[] = $value->exclusion_domain;
+                    $sandboxIframesExclusions[] = $value->exclusion_domain;
                 }
             }
-            // Join the URLs into a comma-separated string and add to the sandbox_iframes_exclusions list
-            $sandboxIframesExclusions .= ', ' . implode(', ', $exclusionsArray);
         }
+
+        $sandboxIframesExclusions = array_values(array_unique(array_filter($sandboxIframesExclusions)));
 
         // Build the final options set
         $scriptOptions   = array_merge(
@@ -578,7 +577,7 @@ trait DisplayTrait
 
                 // Hardened security
                 'sandbox_iframes'            => (bool) $levelParams->get('sandbox_iframes', true),
-                'sandbox_iframes_exclusions' => $sandboxIframesExclusions,
+                'joomlaSandboxIframesExclusions' => $sandboxIframesExclusions,
                 'convert_unsafe_embeds'      => true,
 
                 // Specify the attributes to be used when previewing a style. This prevents white text on a white background making the preview invisible.

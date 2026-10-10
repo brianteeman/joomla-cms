@@ -147,6 +147,12 @@ Joomla.JoomlaTinyMCE = {
       options = Joomla.extend({}, options);
     }
 
+    // Keep Joomla's additional exclusions separate from TinyMCE options.
+    const joomlaSandboxIframesExclusions = options.joomlaSandboxIframesExclusions || [];
+    delete options.joomlaSandboxIframesExclusions;
+
+    const originalSetup = options.setup;
+
     if (element) {
       // We already have the Target, so reset the selector and assign given element as target
       options.selector = null;
@@ -181,6 +187,18 @@ Joomla.JoomlaTinyMCE = {
     }
 
     options.setup = (editor) => {
+      // Extend TinyMCE's default exclusions with Joomla's additional domains.
+      const exclusions = editor.options.get('sandbox_iframes_exclusions');
+
+      editor.options.set(
+        'sandbox_iframes_exclusions',
+        [...new Set([...exclusions, ...joomlaSandboxIframesExclusions])],
+      );
+
+      if (typeof originalSetup === 'function') {
+        originalSetup.call(editor, editor);
+      }
+
       editor.mode.set(readOnlyMode ? 'readonly' : 'design');
     };
 
