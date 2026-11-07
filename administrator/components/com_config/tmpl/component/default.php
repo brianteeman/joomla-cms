@@ -34,7 +34,7 @@ Text::script('JCANCEL');
 $wa = $this->getDocument()->getWebAssetManager();
 $wa->useScript('form.validate')
     ->useScript('keepalive')
-    ->useScript('com_config.unsaved-changes');
+    ->useScript('com_config.admin');
 
 if ($this->fieldsets) {
     HTMLHelper::_('bootstrap.framework');

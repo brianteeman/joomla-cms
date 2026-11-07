@@ -17,6 +17,18 @@
       }
     },
     {
+      "name": "com_config.admin",
+      "type": "script",
+      "uri": "com_config/config-admin.min.js",
+      "dependencies": [
+        "core",
+        "joomla.dialog"
+      ],
+      "attributes": {
+        "type": "module"
+      }
+    },
+    {
       "name": "com_config.modules",
       "type": "script",
       "uri": "com_config/modules-default.min.js",
@@ -44,18 +56,6 @@
       "uri": "com_config/config-filters.min.js",
       "dependencies": [
         "core"
-      ],
-      "attributes": {
-        "type": "module"
-      }
-    },
-    {
-      "name": "com_config.unsaved-changes",
-      "type": "script",
-      "uri": "com_config/unsaved-changes.min.js",
-      "dependencies": [
-        "core",
-        "joomla.dialog"
       ],
       "attributes": {
         "type": "module"
