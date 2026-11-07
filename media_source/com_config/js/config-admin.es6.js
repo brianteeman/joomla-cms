@@ -39,7 +39,7 @@ const confirmUnsavedChanges = () => {
     popup.addEventListener('joomla-dialog:close', () => resolve(result));
     popup.show();
   });
-}
+};
 
 /**
  * Watch on unsaved changes, and warn User before navigation to another configuration form
@@ -56,7 +56,7 @@ const watchOnUnsavedChanges = () => {
   let prevFormState;
   const getState = () => {
     return new URLSearchParams(new FormData(form)).toString();
-  }
+  };
 
   form.addEventListener('changed', () => {
     prevFormState = getState();
@@ -91,7 +91,7 @@ const watchOnUnsavedChanges = () => {
         }
       });
   });
-}
+};
 
 watchOnUnsavedChanges();
 
