@@ -64,7 +64,7 @@ const watchOnUnsavedChanges = () => {
   prevFormState = getState();
 
   let confirmationReceived = false;
-  navigation.addEventListener('click', (event) => {
+  navigation.addEventListener('click', async (event) => {
     const link = event.target.closest('a');
     if (!link?.href || link.href === '#' || link.target) {
       return;
@@ -83,12 +83,14 @@ const watchOnUnsavedChanges = () => {
     event.preventDefault();
 
     // Ask confirmation
-    confirmUnsavedChanges()
+    await confirmUnsavedChanges()
       .then((result) => {
         if (result) {
           confirmationReceived = true;
           link.click();
         }
+      }).catch((e) => {
+        console.error(e);
       });
   });
 };
