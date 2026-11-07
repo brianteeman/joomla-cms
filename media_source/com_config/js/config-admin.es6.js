@@ -66,7 +66,7 @@ const watchOnUnsavedChanges = () => {
   let confirmationReceived = false;
   navigation.addEventListener('click', (event) => {
     const link = event.target.closest('a');
-    if (!link || !link.href || link.href === '#' || link.target) {
+    if (!link?.href || link.href === '#' || link.target) {
       return;
     }
 
