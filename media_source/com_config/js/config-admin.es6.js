@@ -34,7 +34,7 @@ const confirmUnsavedChanges = () => {
         className: 'button button-secondary btn btn-outline-secondary',
       },
     ];
-    popup.cancelable = false;
+
     popup.classList.add('joomla-dialog-confirm');
     popup.addEventListener('joomla-dialog:close', () => resolve(result));
     popup.show();
