@@ -71,8 +71,10 @@ class JFormValidator {
       }
     }
 
-    element.classList.remove('is-invalid');
-    element.classList.add('is-valid');
+    element.classList.remove('form-control-danger', 'invalid');
+    element.classList.add('form-control-success');
+    element.parentNode.classList.remove('has-danger');
+    element.parentNode.classList.add('has-success');
     element.setAttribute('aria-invalid', 'false');
 
     // Remove message
@@ -91,8 +93,10 @@ class JFormValidator {
     const label = element.form.querySelector(`label[for="${element.id}"]`)
       || document.getElementById(`${element.id}-lbl`);
 
-    element.classList.remove('is-valid');
-    element.classList.add('is-invalid');
+    element.classList.remove('form-control-success', 'valid');
+    element.classList.add('form-control-danger', 'invalid');
+    element.parentNode.classList.remove('has-success');
+    element.parentNode.classList.add('has-danger');
     element.setAttribute('aria-invalid', 'true');
 
     // Display custom message
@@ -135,7 +139,9 @@ class JFormValidator {
       message = label.querySelector('span.form-control-feedback');
     }
 
-    element.classList.remove('is-invalid', 'is-valid');
+    element.classList.remove('form-control-danger', 'form-control-success', 'remove');
+    element.classList.add('valid');
+    element.parentNode.classList.remove('has-danger', 'has-success');
 
     // Remove message
     if (message && label) {
