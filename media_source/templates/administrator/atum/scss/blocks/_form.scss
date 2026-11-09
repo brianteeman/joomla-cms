@@ -25,14 +25,6 @@
     background-color: $file-selector-btn-bg-hvr;
   }
 
-  &.invalid {
-    border-color: var(--danger);
-  }
-
-  &.valid {
-    border-color: var(--success);
-  }
-
   &::placeholder {
     font-style: italic;
     opacity: .9;
