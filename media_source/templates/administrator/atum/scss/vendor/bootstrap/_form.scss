@@ -43,6 +43,14 @@ legend {
 }
 
 // Validation
+.invalid {
+  border-color: var(--danger);
+}
+
+.valid {
+  border-color: var(--success);
+}
+
 .form-control-feedback {
   display: block;
 }
